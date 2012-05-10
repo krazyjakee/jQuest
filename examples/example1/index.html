@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+	<title>Example 1: Loading a Map</title>
+	<style>
+		body{ margin:0; padding:0; font-family: tahoma; text-align:center }
+		.header{ margin:10px; }
+		.tile{ float:left; background-repeat: no-repeat }
+		.layer{ position:absolute }
+	</style>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript" src="../../src/js/map.jquest.js"></script>
+	<script type="text/javascript">
+		$(window).load(function(){
+			// Select which element to write into and then set either a file location (without extension) or a json object.
+			Map.loadMap('.mapcontainer','desert');
+		});
+	</script>
+</head>
+<body>
+	<div class="header">
+		<h1>Loading a Map</h1>
+		<h2>This page shows you how awesomely easy it is to render a map to the browser.</h2>
+	</div>
+	<div class="mapcontainer"><small id="maploading">Loading...</small></div>
+</body>
+</html>
