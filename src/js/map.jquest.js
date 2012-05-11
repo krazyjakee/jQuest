@@ -11,8 +11,8 @@ var Map = {
 					$('#layer'+index).append('<div id="tile'+index+'-'+i+'" class="tile"></div>');
 					Map.drawTile(index, layer.data[i], i);
 				}
-				$('#layer'+index).css('min-width',Map.mapData.tilewidth * Map.mapData.width + 'px');
-				$('#layer'+index).css('min-height',Map.mapData.tileheight * Map.mapData.height + 'px');
+				$('#layer'+index).css('width',Map.mapData.tilewidth * Map.mapData.width + 'px');
+				$('#layer'+index).css('height',Map.mapData.tileheight * Map.mapData.height + 'px');
 				$(targetElem).addClass('viewport');
 				$('#maploading').remove();
 			}else if(layer.type == "objectlayer"){
