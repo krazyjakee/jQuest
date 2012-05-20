@@ -158,7 +158,7 @@ var Map = {
 		tileId = tileId - 1;
 		var property = false;
 		$.each(Map.mapData.tilesets, function(index, data){
-			if(data.tileproperties[tileId] != null){
+			if(data.tileproperties != null && data.tileproperties[tileId] != null){
 				property = data.tileproperties[tileId].property;
 			}
 		});
