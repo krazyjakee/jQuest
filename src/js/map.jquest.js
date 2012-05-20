@@ -100,8 +100,14 @@ var Map = {
 		var curloc = $('.layer:first').position();
 		loc[0] = (loc[0]*32) - ($('.viewport').width()/2);
 		loc[1] = (loc[1]*32) - ($('.viewport').height()/2);
+		var maxheight = $('.viewport').height() - 64;
+		var maxwidth = $('.viewport').width() - 64;
+		
+		// Set view limits
 		if(loc[1] < 0){loc[1]=0;}
 		if(loc[0] < 0){loc[0]=0;}
+		if(loc[1] > maxheight){loc[1]=maxheight;}
+		if(loc[0] > maxwidth){loc[0]=maxwidth;}
 		
 		Map.isMoving = true;
 		
@@ -149,6 +155,7 @@ var Map = {
 		}
 	},
 	tileProperty: function(tileId){
+		tileId = tileId - 1;
 		var property = false;
 		$.each(Map.mapData.tilesets, function(index, data){
 			if(data.tileproperties[tileId] != null){
@@ -170,7 +177,7 @@ var Map = {
 				$('#layer'+Map.playerLayer+' div').css('background-color','transparent');
 				$.each(paths, function(index, path){
 					var tileId = Map.tileIdConvert([path.x,path.y]);
-					$('#tile'+Map.playerLayer+'-'+tileId).css('background-color','#ff0');
+					$('#tile'+Map.playerLayer+'-'+tileId).css('background-color','red');
 				});
 			}
 			Map.setFocus(tileId, (paths.length * 500));
@@ -189,7 +196,7 @@ var Map = {
 			for(var y = 0; y < Map.mapData.height-1; y++)
 			{
 				var tile = Map.tileIdConvert([x,y]);
-				var prop = Map.tileProperties[tile-1];
+				var prop = Map.tileProperties[tile];
 				if(prop == 'block'){
 					board[x][y] = 1;
 				}else{
