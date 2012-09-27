@@ -1,126 +1,145 @@
-/*
-Copyright (C) 2009 by Benjamin Hardin
+var AStar = (function () {
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+    /**
+     * A* (A-Star) algorithm for a path finder
+     * @author  Andrea Giammarchi
+     * @license Mit Style License
+     */
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
+    function diagonalSuccessors($N, $S, $E, $W, N, S, E, W, grid, rows, cols, result, i) {
+        if($N) {
+            $E && !grid[N][E] && (result[i++] = {x:E, y:N});
+            $W && !grid[N][W] && (result[i++] = {x:W, y:N});
+        }
+        if($S){
+            $E && !grid[S][E] && (result[i++] = {x:E, y:S});
+            $W && !grid[S][W] && (result[i++] = {x:W, y:S});
+        }
+        return result;
+    }
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-*/
+    function diagonalSuccessorsFree($N, $S, $E, $W, N, S, E, W, grid, rows, cols, result, i) {
+        $N = N > -1;
+        $S = S < rows;
+        $E = E < cols;
+        $W = W > -1;
+        if($E) {
+            $N && !grid[N][E] && (result[i++] = {x:E, y:N});
+            $S && !grid[S][E] && (result[i++] = {x:E, y:S});
+        }
+        if($W) {
+            $N && !grid[N][W] && (result[i++] = {x:W, y:N});
+            $S && !grid[S][W] && (result[i++] = {x:W, y:S});
+        }
+        return result;
+    }
 
-function a_star(start, destination, board, columns, rows)
-{
-	start = new node(start[0], start[1], -1, -1, -1, -1);
-	destination = new node(destination[0], destination[1], -1, -1, -1, -1);
+    function nothingToDo($N, $S, $E, $W, N, S, E, W, grid, rows, cols, result, i) {
+        return result;
+    }
 
-	var open = [];
-	var closed = [];
+    function successors(find, x, y, grid, rows, cols){
+        var
+            N = y - 1,
+            S = y + 1,
+            E = x + 1,
+            W = x - 1,
+            $N = N > -1 && !grid[N][x],
+            $S = S < rows && !grid[S][x],
+            $E = E < cols && !grid[y][E],
+            $W = W > -1 && !grid[y][W],
+            result = [],
+            i = 0
+        ;
+        $N && (result[i++] = {x:x, y:N});
+        $E && (result[i++] = {x:E, y:y});
+        $S && (result[i++] = {x:x, y:S});
+        $W && (result[i++] = {x:W, y:y});
+        return find($N, $S, $E, $W, N, S, E, W, grid, rows, cols, result, i);
+    }
 
-	var g = 0;
-	var h = heuristic(start, destination);
-	var f = g+h;
-	open.push(start); 
+    function diagonal(start, end, f1, f2) {
+        return f2(f1(start.x - end.x), f1(start.y - end.y));
+    }
 
-	while (open.length > 0)
-	{
-		var best_cost = open[0].f;
-		var best_node = 0;
+    function euclidean(start, end, f1, f2) {
+        var
+            x = start.x - end.x,
+            y = start.y - end.y
+        ;
+        return f2(x * x + y * y);
+    }
 
-		for (var i = 1; i < open.length; i++)
-		{
-			if (open[i].f < best_cost)
-			{
-				best_cost = open[i].f;
-				best_node = i;
-			}
-		}
+    function manhattan(start, end, f1, f2) {
+        return f1(start.x - end.x) + f1(start.y - end.y);
+    }
 
-		var current_node = open[best_node];
+    function AStar(grid, start, end, f) {
+        var
+            cols = grid[0].length,
+            rows = grid.length,
+            limit = cols * rows,
+            f1 = Math.abs,
+            f2 = Math.max,
+            list = {},
+            result = [],
+            open = [{x:start[0], y:start[1], f:0, g:0, v:start[0]+start[1]*cols}],
+            length = 1,
+            adj, distance, find, i, j, max, min, current, next
+        ;
+        end = {x:end[0], y:end[1], v:end[0]+end[1]*cols};
+        switch (f) {
+            case "Diagonal":
+                find = diagonalSuccessors;
+            case "DiagonalFree":
+                distance = diagonal;
+                break;
+            case "Euclidean":
+                find = diagonalSuccessors;
+            case "EuclideanFree":
+                f2 = Math.sqrt;
+                distance = euclidean;
+                break;
+            default:
+                distance = manhattan;
+                find = nothingToDo;
+                break;
+        }
+        find || (find = diagonalSuccessorsFree);
+        do {
+            max = limit;
+            min = 0;
+            for(i = 0; i < length; ++i) {
+                if((f = open[i].f) < max) {
+                    max = f;
+                    min = i;
+                }
+            };
+            current = open.splice(min, 1)[0];
+            if (current.v != end.v) {
+                --length;
+                next = successors(find, current.x, current.y, grid, rows, cols);
+                for(i = 0, j = next.length; i < j; ++i){
+                    (adj = next[i]).p = current;
+                    adj.f = adj.g = 0;
+                    adj.v = adj.x + adj.y * cols;
+                    if(!(adj.v in list)){
+                        adj.f = (adj.g = current.g + distance(adj, current, f1, f2)) + distance(adj, end, f1, f2);
+                        open[length++] = adj;
+                        list[adj.v] = 1;
+                    }
+                }
+            } else {
+                i = length = 0;
+                do {
+                    result[i++] = {x: current.x, y: current.y};
+                } while (current = current.p);
+                result.reverse();
+            }
+        } while (length);
+        return result;
+    }
 
-		if (current_node.x == destination.x && current_node.y == destination.y)
-		{
-			var path = [destination];
+    return AStar;
 
-			while (current_node.parent_index != -1)
-			{
-				current_node = closed[current_node.parent_index];
-				path.unshift(current_node);
-			}
-
-			return path;
-		}
-
-		open.splice(best_node, 1);
-
-		closed.push(current_node);
-
-		for (var new_node_x = Math.max(0, current_node.x-1); new_node_x <= Math.min(columns-1, current_node.x+1); new_node_x++)
-			for (var new_node_y = Math.max(0, current_node.y-1); new_node_y <= Math.min(rows-1, current_node.y+1); new_node_y++)
-			{
-				if (board[new_node_x][new_node_y] == 0
-					|| (destination.x == new_node_x && destination.y == new_node_y))
-				{
-					var found_in_closed = false;
-					for (var i in closed)
-						if (closed[i].x == new_node_x && closed[i].y == new_node_y)
-						{
-							found_in_closed = true;
-							break;
-						}
-
-					if (found_in_closed)
-						continue;
-
-					var found_in_open = false;
-					for (var i in open)
-						if (open[i].x == new_node_x && open[i].y == new_node_y)
-						{
-							found_in_open = true;
-							break;
-						}
-
-					if (!found_in_open)
-					{
-						var new_node = new node(new_node_x, new_node_y, closed.length-1, -1, -1, -1);
-
-						new_node.g = current_node.g + Math.floor(Math.sqrt(Math.pow(new_node.x-current_node.x, 2)+Math.pow(new_node.y-current_node.y, 2)));
-						new_node.h = heuristic(new_node, destination);
-						new_node.f = new_node.g+new_node.h;
-
-						open.push(new_node);
-					}
-				}
-			}
-	}
-
-	return [];
-}
-
-function heuristic(current_node, destination)
-{
-	var x = current_node.x-destination.x;
-	var y = current_node.y-destination.y;
-	return x*x+y*y;
-}
-
-function node(x, y, parent_index, g, h, f)
-{
-	this.x = x;
-	this.y = y;
-	this.parent_index = parent_index;
-	this.g = g;
-	this.h = h;
-	this.f = f;
-}
+}());

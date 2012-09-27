@@ -6,6 +6,7 @@ var Map = {
 	renderedTiles: [],
 	tileProperties: [],
 	playerTile: false,
+	showBlocked: false,
 	showPaths: false,
 	playerLayer: 0,
 	isMoving: false,
@@ -98,10 +99,10 @@ var Map = {
 	setFocus: function(tileId, duration){
 		var loc = Map.tileIdConvert(tileId);
 		var curloc = $('.layer:first').position();
+		var maxwidth = (Map.mapData.width*32) - $('.viewport').width();
+		var maxheight = (Map.mapData.height*32) - $('.viewport').height();
 		loc[0] = (loc[0]*32) - ($('.viewport').width()/2);
 		loc[1] = (loc[1]*32) - ($('.viewport').height()/2);
-		var maxheight = $('.viewport').height() - 64;
-		var maxwidth = $('.viewport').width() - 64;
 		
 		// Set view limits
 		if(loc[1] < 0){loc[1]=0;}
@@ -111,31 +112,17 @@ var Map = {
 		
 		Map.isMoving = true;
 		
-		$.fn.addKeyframe([{
-		    name: "viewport-move",
-		    "from": "top:-"+curloc.top+"px;left:-"+curloc.left+"px",
-		    "to": "top:-"+loc[1]+"px;left:-"+loc[0]+"px"
-		}]);
-		
-		$('.layer').playKeyframe({
-	        name: 'viewport-move',
-	        duration: duration,
-	        timingFunction: 'ease',
-	        delay: 0, 
-	        repeat: 1,
-	        direction: 'normal',
-	        fillMode: 'forwards'
-	    }, function(){
-	    	$('.layer').css('left','-'+loc[0]+'px');
-	    	$('.layer').css('top','-'+loc[1]+'px');
-	    	$('.layer').resetKeyframe(function(){
-	    		Map.isMoving = false;
-	    	});
+		$('.layer').clearQueue();
+		$('.layer').animate({
+	        top: "-"+loc[1]+"px",
+			left: "-"+loc[0]+"px"
+	    }, duration, function(){
+	    	Map.isMoving = false;
 	    });
 	},
 	tileIdConvert: function(tileInput){
 		if(typeof tileInput == 'object'){
-			var tileId = tileInput[1] * Map.mapData.width;
+			var tileId = tileInput[1] * Map.mapData.width-1;
 			tileId += tileInput[0];
 			return tileId;
 		}else{
@@ -167,21 +154,23 @@ var Map = {
 	tileClick: function(e){
 		var tileId = $(this).attr('id');
 		tileId = tileId.substr(tileId.lastIndexOf('-')+1);
-		
+		tileId++;
 		if(e.button == 2){
 			alert()
 		}
 		else{
 			var paths = Map.makePath(tileId);
-			if(Map.showPaths){
-				$('#layer'+Map.playerLayer+' div').css('background-color','transparent');
-				$.each(paths, function(index, path){
-					var tileId = Map.tileIdConvert([path.x,path.y]);
-					$('#tile'+Map.playerLayer+'-'+tileId).css('background-color','red');
-				});
+			if(paths.length){
+				if(Map.showPaths){
+					$('#layer'+Map.playerLayer+' div').css('background-color','transparent');
+					$.each(paths, function(index, path){
+						var tileId = Map.tileIdConvert([path.x,path.y]);
+						$('#tile'+Map.playerLayer+'-'+tileId).css('background-color','red');
+					});
+				}
+				Map.setFocus(tileId, (paths.length * 500));
+				Map.playerTile = tileId;
 			}
-			Map.setFocus(tileId, (paths.length * 500));
-			Map.playerTile = tileId;
 		}
 	},
 	makePath: function(toTileId){
@@ -190,20 +179,23 @@ var Map = {
 		var fromTileLoc = Map.tileIdConvert(Map.playerTile);
 		var board = [];
 		
-		for (var x = 0; x < Map.mapData.width-1; x++){
-			board[x] = [];
-		
-			for(var y = 0; y < Map.mapData.height-1; y++)
-			{
+		for(var y = 0; y < Map.mapData.height-1; y++)
+		{
+			board[y] = [];
+			for (var x = 0; x < Map.mapData.width-1; x++){
 				var tile = Map.tileIdConvert([x,y]);
 				var prop = Map.tileProperties[tile];
 				if(prop == 'block'){
-					board[x][y] = 1;
+					board[y][x] = 1;
+					if(Map.showBlocked){
+						var tileidc = this.tileIdConvert([x,y]);
+						$('#tile0-'+tileidc).css('background','red');
+					}
 				}else{
-					board[x][y] = 0;
+					board[y][x] = 0;
 				}
 			}
 		}
-		return a_star(fromTileLoc, toTileLoc, board, Map.mapData.width, Map.mapData.height);
+		return AStar(board, fromTileLoc, toTileLoc, 'Diagonal');
 	}
 }
