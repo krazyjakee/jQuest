@@ -132,7 +132,40 @@ var AStar = (function () {
             } else {
                 i = length = 0;
                 do {
-                    result[i++] = {x: current.x, y: current.y};
+                	var direction = "";
+                	var pointa = result[i-1];
+                	var pointb = {x: current.x, y: current.y};
+                	if(pointa){
+                		// go north
+                		if(pointa.x == pointb.x){
+	                		if(pointa.y > pointb.y){
+		                		direction = "s";
+	                		}else if(pointa.y < pointb.y){
+		                		direction = "n";
+	                		}
+                		}
+                		// go west
+	                	if(pointa.x > pointb.x){
+		                	if(pointa.y == pointb.y){
+			                	direction = "w";
+		                	}else if(pointa.y < pointb.y){
+			                	direction = "nw";
+		                	}else if(pointa.y > pointb.y){
+			                	direction = "se";
+		                	}
+	                	}
+	                	// go east
+	                	if(pointa.x < pointb.x){
+		                	if(pointa.y == pointb.y){
+			                	direction = "e";
+		                	}else if(pointa.y < pointb.y){
+			                	direction = "ne";
+		                	}else if(pointa.y > pointb.y){
+			                	direction = "sw";
+		                	}
+	                	}
+                	}
+                    result[i++] = {x: current.x, y: current.y, direction: direction};
                 } while (current = current.p);
                 result.reverse();
             }

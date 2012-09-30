@@ -1,6 +1,7 @@
 var Map = {
 	settings: {
-		fileExtension: 'json'
+		fileExtension: 'json',
+		mapDirectory: ''
 	},
 	mapData: false,
 	renderedTiles: [],
@@ -14,10 +15,6 @@ var Map = {
 		$.each(Map.mapData.layers, function(index, layer){
 			if(layer.type == "tilelayer"){
 				$(targetElem).append('<div class="layer" id="layer'+index+'"></div>');
-				
-				if(layer.name == 'player'){
-					Map.playerLayer = index;
-				}
 					
 				for(var i = 0; i < layer.data.length; i++){
 					$('#layer'+index).append('<div id="tile'+index+'-'+i+'" class="tile"></div>');
@@ -28,13 +25,18 @@ var Map = {
 				$('#layer'+index).css('height',Map.mapData.tileheight * Map.mapData.height + 'px');
 				$('.tile').width(Map.mapData.tilewidth);
 				$('.tile').height(Map.mapData.tileheight);
-				$(targetElem).addClass('viewport');
+				$(targetElem).parent().addClass('viewport');
 				
 				$('.layer:last').find('.tile').click(Map.tileClick);
 
 				$('#maploading').remove();
-			}else if(layer.type == "objectlayer"){
+			}else if(layer.type == "objectgroup"){
+			
+				if(layer.name == "Player"){
+					Map.playerLayer = index;
+				}
 				
+				$(targetElem).append('<div class="layer" id="layer'+index+'"></div>');
 			}
 		});
 	},
@@ -46,7 +48,7 @@ var Map = {
 				callback();
 			}
 		}else if(typeof mapSource == 'string'){
-			$.getJSON(mapSource+'.'+Map.settings.fileExtension, function(json){
+			$.getJSON(Map.settings.mapDirectory+mapSource+'.'+Map.settings.fileExtension, function(json){
 				Map.mapData = json;
 				Map.drawMap(targetElem);
 				if(callback){
@@ -112,8 +114,8 @@ var Map = {
 		
 		Map.isMoving = true;
 		
-		$('.layer').clearQueue();
-		$('.layer').animate({
+		$('.layer-container').stop();
+		$('.layer-container').animate({
 	        top: "-"+loc[1]+"px",
 			left: "-"+loc[0]+"px"
 	    }, duration, function(){
@@ -141,6 +143,12 @@ var Map = {
 			return [x, y];
 		}
 	},
+	tileIdPosition: function(tileInput){
+		if(typeof tileInput != 'object'){
+			tileInput = Map.tileIdConvert(tileInput);
+		}
+		return [(tileInput[0]-1)*Map.mapData.tilewidth,tileInput[1]*Map.mapData.tileheight];
+	},
 	tileProperty: function(tileId){
 		tileId = tileId - 1;
 		var property = false;
@@ -162,14 +170,16 @@ var Map = {
 			var paths = Map.makePath(tileId);
 			if(paths.length){
 				if(Map.showPaths){
-					$('#layer'+Map.playerLayer+' div').css('background-color','transparent');
+					$('#layer'+(Map.playerLayer-1)+' div').css('background-color','transparent');
 					$.each(paths, function(index, path){
 						var tileId = Map.tileIdConvert([path.x,path.y]);
-						$('#tile'+Map.playerLayer+'-'+tileId).css('background-color','red');
+						$('#tile'+(Map.playerLayer-1)+'-'+tileId).css('background-color','red');
 					});
 				}
 				Map.setFocus(tileId, (paths.length * 500));
 				Map.playerTile = tileId;
+				
+				Character.playerMove(paths);
 			}
 		}
 	},
