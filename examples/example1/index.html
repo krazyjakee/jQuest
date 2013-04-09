@@ -9,14 +9,6 @@
 		.layer{ position:absolute }
 		.mapcontainer{ width:320px; height:320px; margin-left:auto; margin-right:auto }
 	</style>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	<script type="text/javascript" src="../../src/js/map.jquest.js"></script>
-	<script type="text/javascript">
-		$(window).load(function(){
-			// Select which element to write into and then set either a file location (without extension) or a json object.
-			Map.loadMap('.mapcontainer','desert');
-		});
-	</script>
 </head>
 <body>
 	<div class="header">
@@ -25,5 +17,17 @@
 	</div>
 	<div class="mapcontainer"><small id="maploading">Loading...</small></div>
 	<br /><a href="../">Back</a>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript" src="../../src/js/jquery.keyframes.js"></script>
+	<script type="text/javascript" src="../../src/js/map.jquest.js"></script>
+	<script type="text/javascript" src="../../src/js/character.jquest.js"></script>
+	<script type="text/javascript" src="../../src/js/astar.js"></script>
+	<script type="text/javascript">
+		$(window).load(function(){
+			Map.playerTile = 67;
+			Map.showPaths = true;
+			Map.loadMap('.layer-container','island');
+		});
+	</script>
 </body>
 </html>

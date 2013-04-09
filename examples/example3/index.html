@@ -10,7 +10,15 @@
 		.layer{ position:absolute; left:0px; top: 0px }
 		.viewport{ background-color: black; position: relative; margin-left:auto; margin-right:auto; overflow:hidden; width:640px; height:640px }
 	</style>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+</head>
+<body>
+	<div class="header">
+		<h1>Pathfinding</h1>
+		<h2>Click on the map and take a look around</h2>
+	</div>
+	<div class="mapcontainer viewport"><small id="maploading">Loading...</small><div class="layer-container"></div></div>
+	<br /><a href="../">Back</a>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<script type="text/javascript" src="../../src/js/jquery.keyframes.js"></script>
 	<script type="text/javascript" src="../../src/js/map.jquest.js"></script>
 	<script type="text/javascript" src="../../src/js/character.jquest.js"></script>
@@ -21,14 +29,6 @@
 			Map.showPaths = true;
 			Map.loadMap('.layer-container','island');
 		});
-	</script>
-</head>
-<body>
-	<div class="header">
-		<h1>Pathfinding</h1>
-		<h2>Click on the map and take a look around</h2>
-	</div>
-	<div class="mapcontainer"><small id="maploading">Loading...</small><div class="layer-container"></div></div>
-	<br /><a href="../">Back</a>
+	</script>s
 </body>
 </html>

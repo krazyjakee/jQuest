@@ -9,7 +9,18 @@
 		.layer{ position:absolute; left:0px; top: 0px }
 		.viewport{ position: relative; margin-left:auto; margin-right:auto; overflow:hidden; width:256px; height:256px }
 	</style>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+</head>
+<body>
+	<div class="header">
+		<h1>Viewports</h1>
+		<h2>Viewports are a restricted window looking at a larger map.<br />
+		Set a viewport class like this one and the map is contained.<br />
+		Tap W, A, S and D keys to look around.</h2>
+	</div>
+	<div class="mapcontainer viewport"><small id="maploading">Loading...</small></div>
+	<br /><a href="../">Back</a>
+    
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 	<script type="text/javascript" src="../../src/js/map.jquest.js"></script>
 	<script type="text/javascript">
 		var keysdown = {
@@ -21,7 +32,7 @@
 		var isanimating = false;
 		
 		$(window).load(function(){
-			Map.loadMap('.mapcontainer','desert');
+			window.Map.loadMap('.mapcontainer','desert');
 			$(window).keydown(function(e){
 				var layerpos = {
 					x: parseInt($('.layer:first').css('left').replace('px','')),
@@ -49,15 +60,5 @@
 			isanimating = false;
 		}
 	</script>
-</head>
-<body>
-	<div class="header">
-		<h1>Viewports</h1>
-		<h2>Viewports are a restricted window looking at a larger map.<br />
-		Set a viewport class like this one and the map is contained.<br />
-		Tap W, A, S and D keys to look around.</h2>
-	</div>
-	<div class="mapcontainer"><small id="maploading">Loading...</small></div>
-	<br /><a href="../">Back</a>
 </body>
 </html>
