@@ -156,10 +156,10 @@ class window.Map
             paths = window.Map.makePath(tileId)
             if paths.length
                 if window.Map.showPaths
-                    $("#layer#{(Map.playerLayer-1)} div").css('background-color','transparent')
+                    $("#layer#{Map.playerLayer} div").css('background-color','transparent')
                     for path, index in paths
                         tileId = window.Map.tileIdConvert([path.x,path.y])
-                        $("#tile#{(Map.playerLayer-1)}-#{tileId}").css('background-color','red')
+                        $("#tile#{Map.playerLayer}-#{tileId}").css('background','red')
                 window.Map.setFocus(tileId, (paths.length * 500))
                 window.Map.playerTile = tileId
                 

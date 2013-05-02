@@ -1,33 +1,64 @@
 <!doctype html>
 <html>
 <head>
-	<title>Example 1: Loading a Map</title>
+	<title>Example 1: Viewports</title>
 	<style>
 		body{ margin:0; padding:0; font-family: tahoma; text-align:center }
 		.header{ margin:10px; }
 		.tile{ float:left; background-repeat: no-repeat }
-		.layer{ position:absolute }
-		.mapcontainer{ width:320px; height:320px; margin-left:auto; margin-right:auto }
+		.layer{ position:absolute; left:0px; top: 0px }
+		.viewport{ position: relative; margin-left:auto; margin-right:auto; overflow:hidden; width:256px; height:256px }
 	</style>
 </head>
 <body>
 	<div class="header">
-		<h1>Loading a Map</h1>
-		<h2>This page shows you how awesomely easy it is to render a map to the browser.</h2>
+		<h1>Viewports</h1>
+		<h2>Viewports are a restricted window looking at a larger map.<br />
+		Set a viewport class like this one and the map is contained.<br />
+		Tap W, A, S and D keys to look around.</h2>
 	</div>
-	<div class="mapcontainer"><small id="maploading">Loading...</small></div>
+	<div class="mapcontainer viewport"><small id="maploading">Loading...</small></div>
 	<br /><a href="../">Back</a>
+    
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	<script type="text/javascript" src="../../src/js/jquery.keyframes.js"></script>
 	<script type="text/javascript" src="../../src/js/map.jquest.js"></script>
-	<script type="text/javascript" src="../../src/js/character.jquest.js"></script>
-	<script type="text/javascript" src="../../src/js/astar.js"></script>
 	<script type="text/javascript">
+		var keysdown = {
+			up: false,
+			left: false,
+			down: false,
+			right: false
+		}
+		var isanimating = false;
+		
 		$(window).load(function(){
-			Map.playerTile = 67;
-			Map.showPaths = true;
-			Map.loadMap('.layer-container','island');
+			window.Map.loadMap('.mapcontainer','desert');
+			$(window).keydown(function(e){
+				var layerpos = {
+					x: parseInt($('.layer:first').css('left').replace('px','')),
+					y: parseInt($('.layer:first').css('top').replace('px',''))
+				}
+				switch(e.which){
+					case 87: if(layerpos.y < 0 && keysdown.up == false && isanimating == false){ $('.layer').animate({ top: '+=32px' }, 100, 'linear', endAnimation); keysdown.up = true; isanimating = true; } break;
+					case 65: if(layerpos.x < 0 && keysdown.left == false && isanimating == false){ $('.layer').animate({ left: '+=32px' }, 100, 'linear', endAnimation); keysdown.left = true; isanimating = true; } break;
+					case 83: if(layerpos.y > -1024 && keysdown.down == false && isanimating == false){ $('.layer').animate({ top: '-=32px' }, 100, 'linear', endAnimation); keysdown.down = true; isanimating = true; } break;
+					case 68: if(layerpos.x > -1024 && keysdown.right == false && isanimating == false){ $('.layer').animate({ left: '-=32px' }, 100, 'linear', endAnimation); keysdown.right = true; isanimating = true; } break;
+				}
+			});
+			
+			$(window).keyup(function(e){
+				switch(e.which){
+					case 87: keysdown.up = false; break;
+					case 65: keysdown.left = false; break;
+					case 83: keysdown.down = false; break;
+					case 68: keysdown.right = false; break;
+				}
+			});
 		});
+		
+		function endAnimation(){
+			isanimating = false;
+		}
 	</script>
 </body>
 </html>
