@@ -1,0 +1,8 @@
+{ "id":0,
+	"name":"Jake",
+	"sprite":"..\/resources\/6Actor_5.png",
+	"width":192,
+	"height":256,
+	"cellWidth":32,
+	"cellHeight":32
+}

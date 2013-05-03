@@ -47,7 +47,7 @@ class window.Character
         if paths[0]
             @animate(0,paths[0].direction)
             
-        $.each paths, (index,path) ->
+        $.each paths, (index, path) ->
             loc = Map.tileIdPosition([path.x,path.y])
             
             if path.direction

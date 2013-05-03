@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+	<title>Example 4: Linking Maps</title>
+	<style>
+		body{ margin:0; padding:0; font-family: tahoma; text-align:center }
+		.header{ margin:10px; }
+		.character{ position:absolute; }
+		.tile{ float:left; background-repeat: no-repeat }
+		.layer-container{ position:absolute; width:800px; height:512px }
+		.layer{ position:absolute; left:0px; top: 0px }
+		.viewport{ background-color: black; position: relative; margin-left:auto; margin-right:auto; overflow:hidden; width:800px; height:512px }
+	</style>
+</head>
+<body>
+	<div class="header">
+		<h1>Linking Areas</h1>
+		<h2>Go through the house door!</h2>
+	</div>
+	<div class="mapcontainer viewport">
+		<small id="maploading">Loading...</small>
+		<div class="layer-container"></div>
+	</div>
+	<br /><a href="../">Back</a>
+    
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script type="text/javascript" src="../../src/js/astar.js"></script>
+	<script type="text/javascript" src="../../src/js/map.jquest.js"></script>
+	<script type="text/javascript" src="../../src/js/character.jquest.js"></script>
+    <script type="text/javascript">
+		$(window).load(function(){
+            
+			window.Map.playerTile = 67;
+			window.Character.settings.spriteDirectory = '';
+			
+			window.Map.loadMap('.layer-container','island2', function(){
+				window.Character.loadSprite('player',window.Character.loadPlayer);
+			});
+		});
+	</script>
+</body>
+</html>
