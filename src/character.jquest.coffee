@@ -62,6 +62,7 @@ class window.Character
                 if index == paths.length-1
                     window.Character.playerMoving = false
                     window.Character.stopAnimation(0)
+                    $('.destination').remove()
                 Map.playerTile = Map.tileIdConvert([path.x+1,path.y])
             
     @animate: (id,direction) ->

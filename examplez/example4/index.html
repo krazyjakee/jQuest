@@ -10,6 +10,15 @@
 		.layer-container{ position:absolute; width:800px; height:512px }
 		.layer{ position:absolute; left:0px; top: 0px }
 		.viewport{ background-color: black; position: relative; margin-left:auto; margin-right:auto; overflow:hidden; width:800px; height:512px }
+		.destination{ width: 32px; height: 32px }
+		.fixmouse, .tile, .viewport{
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
 	</style>
 </head>
 <body>
@@ -23,10 +32,10 @@
 	</div>
 	<br /><a href="../">Back</a>
     
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-	<script type="text/javascript" src="../../src/js/astar.js"></script>
-	<script type="text/javascript" src="../../src/js/map.jquest.js"></script>
-	<script type="text/javascript" src="../../src/js/character.jquest.js"></script>
+    <script type="text/javascript" src="../../src/jquery.min.js"></script>
+	<script type="text/javascript" src="../../src/astar.js"></script>
+	<script type="text/javascript" src="../../src/map.jquest.js"></script>
+	<script type="text/javascript" src="../../src/character.jquest.js"></script>
     <script type="text/javascript">
 		$(window).load(function(){
             

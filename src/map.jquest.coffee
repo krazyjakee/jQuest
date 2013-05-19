@@ -20,6 +20,20 @@ class window.Map
     
     @isMoving: false
     
+    @loadMap: (targetElem, mapSource, callback) ->
+        if typeof mapSource == 'object'
+            @mapData = mapSource
+            @drawMap(targetElem)
+            if callback
+                callback()
+        else if typeof mapSource == 'string'
+            $.getJSON(@settings.mapDirectory+mapSource+'.'+@settings.fileExtension, (json) ->
+                window.Map.mapData = json
+                window.Map.drawMap(targetElem)
+                if callback
+                    callback()
+            )
+            
     @drawMap: (targetElem) ->
         for layer,index in @mapData.layers
             if layer.type == "tilelayer"
@@ -37,20 +51,7 @@ class window.Map
                 if layer.name == "Player"
                     @playerLayer = index
                 $(targetElem).append("<div class=\"layer\" id=\"layer#{index}\" />")
-        
-    @loadMap: (targetElem, mapSource, callback) ->
-        if typeof mapSource == 'object'
-            @mapData = mapSource
-            @drawMap(targetElem)
-            if callback
-                callback()
-        else if typeof mapSource == 'string'
-            $.getJSON(@settings.mapDirectory+mapSource+'.'+@settings.fileExtension, (json) ->
-                window.Map.mapData = json
-                window.Map.drawMap(targetElem)
-                if callback
-                    callback()
-            )
+                
     @drawTile: (layer, srcTile, targetTile) ->
         target = $("#tile#{layer}-#{targetTile}")
             
@@ -80,9 +81,9 @@ class window.Map
         
         if setData.image
             @renderedTiles[srcTile] = "#tile#{layer}-#{targetTile}"
-            property = @tileProperty(srcTile)
-            if property != false
-                @tileProperties[targetTile] = property
+            properties = @tileProperty(srcTile)
+            if properties
+                @tileProperties[targetTile] = properties
             $(target).css('background-image',"url(#{setData.image})")
             $(target).css('background-position',"-#{offset.x}px -#{offset.y}px")
 
@@ -140,13 +141,13 @@ class window.Map
     
     @tileProperty: (tileId) ->
         tileId = tileId - 1
-        property = false
         for data, index in @mapData.tilesets
             if data.tileproperties and data.tileproperties[tileId]
-                property = data.tileproperties[tileId].property
-        return property
+                properties = data.tileproperties[tileId]
+        return properties
     
     @tileClick: (e) ->
+        e.preventDefault()
         tileId = $(this).attr('id')
         tileId = tileId.substr(tileId.lastIndexOf('-')+1)
         tileId++
@@ -155,6 +156,7 @@ class window.Map
         else
             paths = window.Map.makePath(tileId)
             if paths.length
+                window.Character.playerMove(paths)
                 if window.Map.showPaths
                     $("#layer#{Map.playerLayer} div").css('background-color','transparent')
                     for path, index in paths
@@ -162,9 +164,12 @@ class window.Map
                         $("#tile#{Map.playerLayer}-#{tileId}").css('background','red')
                 window.Map.setFocus(tileId, (paths.length * 500))
                 window.Map.playerTile = tileId
+                window.Map.showDestination("#tile#{window.Map.mapData.layers.length-1}-#{tileId-1}")
                 
-                window.Character.playerMove(paths)
-                
+    @showDestination: (elem) ->
+        $('.destination').remove()
+        $(elem).append('<img class="destination" src="../resources/destination.png" />')
+        
     @makePath: (toTileId) ->
         totalMapSize = @mapData.width * @mapData.height
         toTileLoc = @tileIdConvert(toTileId)
@@ -175,12 +180,13 @@ class window.Map
             board[y] = []
             for x in [0..(Map.mapData.width-1)] by 1
                 tile = @tileIdConvert([x,y])
-                prop = @tileProperties[tile]
-                if prop == 'block'
-                    board[y][x] = 1
-                    if @showBlocked
-                        tileidc = this.tileIdConvert([x,y])
-                        $("#tile0-#{tileidc}").css('background','red')
-                else
-                    board[y][x] = 0
+                if @tileProperties[tile]
+                    prop = @tileProperties[tile].property
+                    if prop == 'block'
+                        board[y][x] = 1
+                        if @showBlocked
+                            tileidc = this.tileIdConvert([x,y])
+                            $("#tile0-#{tileidc}").css('background','red')
+                    else
+                        board[y][x] = 0
         return AStar(board, fromTileLoc, toTileLoc, 'Diagonal')
