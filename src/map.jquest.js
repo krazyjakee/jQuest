@@ -1,13 +1,13 @@
 (function() {
-
   window.Map = (function() {
-
     function Map() {}
 
     Map.settings = {
       fileExtension: 'json',
       mapDirectory: ''
     };
+
+    Map.mapElement = false;
 
     Map.mapData = false;
 
@@ -26,6 +26,7 @@
     Map.isMoving = false;
 
     Map.loadMap = function(targetElem, mapSource, callback) {
+      this.mapElement = targetElem;
       if (typeof mapSource === 'object') {
         this.mapData = mapSource;
         this.drawMap(targetElem);
@@ -43,8 +44,16 @@
       }
     };
 
+    Map.unloadMap = function() {
+      $(this.mapElement).empty();
+      this.mapData = false;
+      this.renderedTiles = [];
+      return this.tileProperties = [];
+    };
+
     Map.drawMap = function(targetElem) {
       var currentLayer, i, index, layer, tile, _i, _j, _len, _len1, _ref, _ref1, _results;
+
       _ref = this.mapData.layers;
       _results = [];
       for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
@@ -76,6 +85,7 @@
 
     Map.drawTile = function(layer, srcTile, targetTile) {
       var heightCount, i, index, offset, properties, setData, setHeight, setWidth, target, tileset, widthCount, _i, _j, _len, _ref;
+
       target = $("#tile" + layer + "-" + targetTile);
       setData = false;
       _ref = this.mapData.tilesets;
@@ -116,6 +126,7 @@
 
     Map.setFocus = function(tileId, duration) {
       var curloc, loc, maxheight, maxwidth;
+
       loc = this.tileIdConvert(tileId);
       curloc = $('.layer:first').position();
       maxwidth = (Map.mapData.width * 32) - $('.viewport').width();
@@ -146,6 +157,7 @@
 
     Map.tileIdConvert = function(tileInput) {
       var i, tileId, width, x, y, _i;
+
       if (typeof tileInput === 'object') {
         tileId = tileInput[1] * this.mapData.width - 1;
         tileId += tileInput[0];
@@ -175,6 +187,7 @@
 
     Map.tileProperty = function(tileId) {
       var data, index, properties, _i, _len, _ref;
+
       tileId = tileId - 1;
       _ref = this.mapData.tilesets;
       for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
@@ -188,6 +201,7 @@
 
     Map.tileClick = function(e) {
       var index, path, paths, tileId, _i, _len;
+
       e.preventDefault();
       tileId = $(this).attr('id');
       tileId = tileId.substr(tileId.lastIndexOf('-') + 1);
@@ -220,6 +234,7 @@
 
     Map.makePath = function(toTileId) {
       var board, fromTileLoc, prop, tile, tileidc, toTileLoc, totalMapSize, x, y, _i, _j, _ref, _ref1;
+
       totalMapSize = this.mapData.width * this.mapData.height;
       toTileLoc = this.tileIdConvert(toTileId);
       fromTileLoc = this.tileIdConvert(Map.playerTile);

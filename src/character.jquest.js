@@ -1,7 +1,5 @@
 (function() {
-
   window.Character = (function() {
-
     function Character() {}
 
     Character.settings = {
@@ -19,6 +17,7 @@
 
     Character.loadSprite = function(charSource, callback) {
       var spritefile;
+
       spritefile = "" + (this.settings.spriteDirectory + charSource) + "." + this.settings.fileExtension;
       return $.getJSON(spritefile, function(json) {
         window.Character.sprites[json.id] = json;
@@ -30,6 +29,7 @@
 
     Character.placeCharacter = function(id, sprite, location) {
       var charid, loc;
+
       loc = window.Map.tileIdPosition(location);
       $("#layer" + Map.playerLayer).append("<div class=\"character\" id=\"character" + id + "\" />");
       charid = "#character" + id;
@@ -52,6 +52,7 @@
       */
 
       var index, _i, _ref;
+
       if (this.playerMoving) {
         paths = paths.slice(1);
         this.stopAnimation(0);
@@ -66,6 +67,7 @@
       }
       return $.each(paths, function(index, path) {
         var loc;
+
         loc = Map.tileIdPosition([path.x, path.y]);
         if (path.direction) {
           window.Character.characters[0].timer[index] = setTimeout(function() {
@@ -91,6 +93,7 @@
       return window.Character.characters[id].animation = {
         timer: setInterval(function() {
           var x, y;
+
           if (window.Character.characters[id].animation.step > 5) {
             window.Character.characters[id].animation.step = 0;
           }
@@ -132,6 +135,7 @@
 
     Character.stopAnimation = function(id) {
       var bgpos;
+
       if (window.Character.characters[id].animation) {
         clearInterval(window.Character.characters[id].animation.timer);
         bgpos = $("#character" + id).css('background-position').split(' ');
