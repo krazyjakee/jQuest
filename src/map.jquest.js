@@ -29,24 +29,37 @@
       this.mapElement = targetElem;
       if (typeof mapSource === 'object') {
         this.mapData = mapSource;
-        this.drawMap(targetElem);
-        if (callback) {
-          return callback();
-        }
+        return window.Map.doLoad(callback);
       } else if (typeof mapSource === 'string') {
         return $.getJSON(this.settings.mapDirectory + mapSource + '.' + this.settings.fileExtension, function(json) {
           window.Map.mapData = json;
-          window.Map.drawMap(targetElem);
-          if (callback) {
-            return callback();
-          }
+          return window.Map.doLoad(callback);
         });
       }
     };
 
+    Map.doLoad = function(callback) {
+      var m;
+
+      m = window.Map.mapElement;
+      $(m).hide();
+      window.Map.drawMap(m);
+      if (typeof window.Map.playerTile === 'object') {
+        window.Map.playerTile = window.Map.tileIdConvert(window.Map.playerTile);
+      }
+      window.Character.loadSprite(window.Character.settings.playerSprite, window.Character.loadPlayer);
+      $(m).fadeIn('slow');
+      if (callback) {
+        return callback();
+      }
+    };
+
     Map.unloadMap = function(callback) {
-      $(this.mapElement).fadeOut('fast', function() {
-        $(this.mapElement).empty();
+      $(this.mapElement).fadeOut('slow', function() {
+        $(window.Map.mapElement).html('').css({
+          left: '',
+          top: ''
+        });
         if (callback) {
           return callback();
         }
@@ -74,7 +87,7 @@
           }
           $(currentLayer).css('width', this.mapData.tilewidth * this.mapData.width + 'px').css('height', this.mapData.tileheight * this.mapData.height + 'px');
           $('.tile').width(this.mapData.tilewidth).height(this.mapData.tileheight);
-          $('.layer:last').find('.tile').click(this.tileClick);
+          $('.layer:last').find('.tile').mousedown(this.tileClick);
           _results.push($('#maploading').remove());
         } else if (layer.type === "objectgroup") {
           if (layer.name === "Player") {
@@ -164,8 +177,8 @@
       var i, tileId, width, x, y, _i;
 
       if (typeof tileInput === 'object') {
-        tileId = tileInput[1] * this.mapData.width - 1;
-        tileId += tileInput[0];
+        tileId = parseInt(tileInput[1]) * this.mapData.width - 1;
+        tileId += parseInt(tileInput[0]);
         return tileId;
       } else {
         y = 0;
@@ -207,8 +220,8 @@
     Map.tilePropertyLogic = function(prop) {
       switch (prop.property) {
         case "door":
-          this.playerTile = prop.loc.split(',');
           this.unloadMap(function() {
+            window.Map.playerTile = prop.loc.split(',');
             window.Map.loadMap(window.Map.mapElement, prop.map);
           });
       }
@@ -222,7 +235,7 @@
       tileId = tileId.substr(tileId.lastIndexOf('-') + 1);
       tileId++;
       if (e.button === 2) {
-        return alert();
+
       } else {
         paths = window.Map.makePath(tileId);
         if (paths.length) {

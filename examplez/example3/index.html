@@ -41,10 +41,9 @@
             
 			window.Map.playerTile = 67;
 			window.Character.settings.spriteDirectory = '';
+			window.Character.spriteList = { playerSprite: 'player' }
 			
-			window.Map.loadMap('.layer-container','island2', function(){
-				window.Character.loadSprite('player',window.Character.loadPlayer);
-			});
+			window.Map.loadMap('.layer-container','island2');
 		});
 	</script>
 </body>

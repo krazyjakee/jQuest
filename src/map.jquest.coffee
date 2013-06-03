@@ -26,20 +26,26 @@ class window.Map
     @mapElement = targetElem
     if typeof mapSource == 'object'
       @mapData = mapSource
-      @drawMap(targetElem)
-      if callback
-        callback()
+      window.Map.doLoad(callback)
     else if typeof mapSource == 'string'
-      $.getJSON(@settings.mapDirectory+mapSource+'.'+@settings.fileExtension, (json) ->
+      $.getJSON @settings.mapDirectory+mapSource+'.'+@settings.fileExtension, (json) ->
         window.Map.mapData = json
-        window.Map.drawMap(targetElem)
-        if callback
-          callback()
-      )
+        window.Map.doLoad(callback)
+  
+  @doLoad: (callback) ->
+    m = window.Map.mapElement
+    $(m).hide()
+    window.Map.drawMap(m)
+    if typeof window.Map.playerTile == 'object'
+      window.Map.playerTile = window.Map.tileIdConvert(window.Map.playerTile)
+    window.Character.loadSprite(window.Character.settings.playerSprite, window.Character.loadPlayer)
+    $(m).fadeIn('slow')
+    if callback
+        callback()
   
   @unloadMap: (callback) ->
-    $(@mapElement).fadeOut 'fast', ->
-        $(@mapElement).empty()
+    $(@mapElement).fadeOut 'slow', ->
+        $(window.Map.mapElement).html('').css({left:'',top:''})
         if callback
             callback()
     @mapData = false
@@ -58,7 +64,7 @@ class window.Map
           @drawTile(index, tile, i)
         $(currentLayer).css('width',@mapData.tilewidth * @mapData.width + 'px').css('height',@mapData.tileheight * @mapData.height + 'px')
         $('.tile').width(@mapData.tilewidth).height(@mapData.tileheight)
-        $('.layer:last').find('.tile').click(@tileClick)
+        $('.layer:last').find('.tile').mousedown(@tileClick)
         $('#maploading').remove()
       else if layer.type == "objectgroup"
         if layer.name == "Player"
@@ -130,8 +136,8 @@ class window.Map
     
   @tileIdConvert: (tileInput) ->
     if typeof tileInput == 'object'
-      tileId = tileInput[1] * @mapData.width-1
-      tileId += tileInput[0]
+      tileId = parseInt(tileInput[1]) * @mapData.width-1
+      tileId += parseInt(tileInput[0])
       return tileId
     else
       y = 0
@@ -162,8 +168,8 @@ class window.Map
   @tilePropertyLogic: (prop) ->
     switch prop.property
         when "door"
-            @playerTile = prop.loc.split(',')
             @unloadMap -> 
+                window.Map.playerTile = prop.loc.split(',')
                 window.Map.loadMap window.Map.mapElement, prop.map
                 return
             return
@@ -175,7 +181,7 @@ class window.Map
     tileId = tileId.substr(tileId.lastIndexOf('-')+1)
     tileId++
     if e.button == 2
-      alert()
+      # alert()
     else
       paths = window.Map.makePath(tileId)
       if paths.length
@@ -212,4 +218,5 @@ class window.Map
               $("#tile0-#{tileidc}").css('background','red')
           else
             board[y][x] = 0
+            # One extra Y for some reason :S
     return AStar(board, fromTileLoc, toTileLoc, 'Diagonal')

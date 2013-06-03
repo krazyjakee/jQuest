@@ -1,5 +1,5 @@
 class window.Character
-    @settings: fileExtension: 'json', spriteDirectory: ''
+    @settings: fileExtension: 'json', spriteDirectory: '', playerSprite: 'player'
     
     @sprites: []
     
