@@ -44,8 +44,13 @@
       }
     };
 
-    Map.unloadMap = function() {
-      $(this.mapElement).empty();
+    Map.unloadMap = function(callback) {
+      $(this.mapElement).fadeOut('fast', function() {
+        $(this.mapElement).empty();
+        if (callback) {
+          return callback();
+        }
+      });
       this.mapData = false;
       this.renderedTiles = [];
       return this.tileProperties = [];
@@ -199,6 +204,16 @@
       return properties;
     };
 
+    Map.tilePropertyLogic = function(prop) {
+      switch (prop.property) {
+        case "door":
+          this.playerTile = prop.loc.split(',');
+          this.unloadMap(function() {
+            window.Map.loadMap(window.Map.mapElement, prop.map);
+          });
+      }
+    };
+
     Map.tileClick = function(e) {
       var index, path, paths, tileId, _i, _len;
 
@@ -243,8 +258,8 @@
         board[y] = [];
         for (x = _j = 0, _ref1 = Map.mapData.width - 1; _j <= _ref1; x = _j += 1) {
           tile = this.tileIdConvert([x, y]);
-          if (this.tileProperties[tile]) {
-            prop = this.tileProperties[tile].property;
+          if (prop = this.tileProperties[tile]) {
+            prop = prop.property;
             if (prop === 'block') {
               board[y][x] = 1;
               if (this.showBlocked) {

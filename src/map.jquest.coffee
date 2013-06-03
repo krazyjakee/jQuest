@@ -37,11 +37,15 @@ class window.Map
           callback()
       )
   
-  @unloadMap: () ->
-    $(@mapElement).empty()
+  @unloadMap: (callback) ->
+    $(@mapElement).fadeOut 'fast', ->
+        $(@mapElement).empty()
+        if callback
+            callback()
     @mapData = false
     @renderedTiles = []
     @tileProperties = []
+    
   
   @drawMap: (targetElem) ->
     for layer,index in @mapData.layers
@@ -155,6 +159,16 @@ class window.Map
         properties = data.tileproperties[tileId]
     return properties
   
+  @tilePropertyLogic: (prop) ->
+    switch prop.property
+        when "door"
+            @playerTile = prop.loc.split(',')
+            @unloadMap -> 
+                window.Map.loadMap window.Map.mapElement, prop.map
+                return
+            return
+            
+  
   @tileClick: (e) ->
     e.preventDefault()
     tileId = $(this).attr('id')
@@ -189,8 +203,8 @@ class window.Map
       board[y] = []
       for x in [0..(Map.mapData.width-1)] by 1
         tile = @tileIdConvert([x,y])
-        if @tileProperties[tile]
-          prop = @tileProperties[tile].property
+        if prop = @tileProperties[tile]
+          prop = prop.property
           if prop == 'block'
             board[y][x] = 1
             if @showBlocked

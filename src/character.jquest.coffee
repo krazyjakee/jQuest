@@ -60,6 +60,11 @@ class window.Character
                 top: loc[1]
             },300,'linear', ->
                 if index == paths.length-1
+                    
+                    tile = window.Map.tileIdConvert([path.x,path.y])
+                    if prop = window.Map.tileProperties[tile]
+                        Map.tilePropertyLogic(prop)
+                        
                     window.Character.playerMoving = false
                     window.Character.stopAnimation(0)
                     $('.destination').remove()
