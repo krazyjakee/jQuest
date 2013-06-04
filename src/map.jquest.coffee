@@ -181,7 +181,10 @@ class window.Map
     tileId = tileId.substr(tileId.lastIndexOf('-')+1)
     tileId++
     if e.button == 2
-      # alert()
+      prop = 'none'
+      if prop2 = window.Map.tileProperty(tileId+1)
+        prop = prop2.property
+      alert(window.Map.tileIdConvert(tileId+1) + '-' + prop)
     else
       paths = window.Map.makePath(tileId)
       if paths.length
@@ -202,10 +205,10 @@ class window.Map
   @makePath: (toTileId) ->
     totalMapSize = @mapData.width * @mapData.height
     toTileLoc = @tileIdConvert(toTileId)
-    fromTileLoc = @tileIdConvert(Map.playerTile)
+    fromTileLoc = @tileIdConvert(@playerTile)
     board = []
     
-    for y in [0...(Map.mapData.height-1)] by 1
+    for y in [0..(Map.mapData.height-1)] by 1
       board[y] = []
       for x in [0..(Map.mapData.width-1)] by 1
         tile = @tileIdConvert([x,y])
@@ -216,7 +219,6 @@ class window.Map
             if @showBlocked
               tileidc = this.tileIdConvert([x,y])
               $("#tile0-#{tileidc}").css('background','red')
-          else
-            board[y][x] = 0
-            # One extra Y for some reason :S
+        else
+          board[y][x] = 0
     return AStar(board, fromTileLoc, toTileLoc, 'Diagonal')

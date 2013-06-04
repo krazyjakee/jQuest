@@ -228,14 +228,18 @@
     };
 
     Map.tileClick = function(e) {
-      var index, path, paths, tileId, _i, _len;
+      var index, path, paths, prop, prop2, tileId, _i, _len;
 
       e.preventDefault();
       tileId = $(this).attr('id');
       tileId = tileId.substr(tileId.lastIndexOf('-') + 1);
       tileId++;
       if (e.button === 2) {
-
+        prop = 'none';
+        if (prop2 = window.Map.tileProperty(tileId + 1)) {
+          prop = prop2.property;
+        }
+        return alert(window.Map.tileIdConvert(tileId + 1) + '-' + prop);
       } else {
         paths = window.Map.makePath(tileId);
         if (paths.length) {
@@ -265,9 +269,9 @@
 
       totalMapSize = this.mapData.width * this.mapData.height;
       toTileLoc = this.tileIdConvert(toTileId);
-      fromTileLoc = this.tileIdConvert(Map.playerTile);
+      fromTileLoc = this.tileIdConvert(this.playerTile);
       board = [];
-      for (y = _i = 0, _ref = Map.mapData.height - 1; _i < _ref; y = _i += 1) {
+      for (y = _i = 0, _ref = Map.mapData.height - 1; _i <= _ref; y = _i += 1) {
         board[y] = [];
         for (x = _j = 0, _ref1 = Map.mapData.width - 1; _j <= _ref1; x = _j += 1) {
           tile = this.tileIdConvert([x, y]);
@@ -279,9 +283,9 @@
                 tileidc = this.tileIdConvert([x, y]);
                 $("#tile0-" + tileidc).css('background', 'red');
               }
-            } else {
-              board[y][x] = 0;
             }
+          } else {
+            board[y][x] = 0;
           }
         }
       }
