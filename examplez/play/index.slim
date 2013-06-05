@@ -1,0 +1,28 @@
+doctype html
+html
+  head    
+    title Welcome to the jQuest Example
+    link rel="stylesheet" href="style.css"
+  body
+    .header
+      h1 The adventure begins!
+      h2 Take a look around.
+    .mapcontainer.viewport
+      small#maploading Loading...
+      .layer-container
+    br
+      
+    script type="text/javascript" src="../../src/jquery.min.js"
+    script type="text/javascript" src="../../src/keyframes.js"
+    script type="text/javascript" src="../../src/astar.js"
+    script type="text/javascript" src="../../src/animations.jquest.js"
+    script type="text/javascript" src="../../src/map.jquest.js"
+    script type="text/javascript" src="../../src/character.jquest.js"
+    javascript:
+      $(window).load(function(){
+        window.Map.playerTile = 67;
+        window.Character.settings.spriteDirectory = '';
+        window.Map.loadMap('.layer-container','island2', function(){
+          window.Character.loadSprite('player',window.Character.loadPlayer);
+        });
+      });

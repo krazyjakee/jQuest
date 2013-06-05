@@ -81,6 +81,9 @@
         }, 300, 'linear', function() {
           var prop, tile;
 
+          if (index >= paths.length - 3) {
+            $('.destination').fadeOut();
+          }
           if (index === paths.length - 1) {
             tile = window.Map.tileIdConvert([path.x, path.y]);
             if (prop = window.Map.tileProperties[tile]) {
@@ -88,7 +91,6 @@
             }
             window.Character.playerMoving = false;
             window.Character.stopAnimation(0);
-            $('.destination').remove();
           }
           return Map.playerTile = Map.tileIdConvert([path.x + 1, path.y]);
         });

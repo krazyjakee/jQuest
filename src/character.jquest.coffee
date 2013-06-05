@@ -59,6 +59,8 @@ class window.Character
                 left: loc[0]
                 top: loc[1]
             },300,'linear', ->
+                if index >= paths.length-3
+                  $('.destination').fadeOut()
                 if index == paths.length-1
                     
                     tile = window.Map.tileIdConvert([path.x,path.y])
@@ -67,7 +69,6 @@ class window.Character
                         
                     window.Character.playerMoving = false
                     window.Character.stopAnimation(0)
-                    $('.destination').remove()
                 Map.playerTile = Map.tileIdConvert([path.x+1,path.y])
             
     @animate: (id,direction) ->

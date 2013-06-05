@@ -216,7 +216,7 @@ class window.Map
       prop = 'none'
       if prop2 = window.Map.tileProperty(tileId+1)
         prop = prop2.property
-      alert(window.Map.tileIdConvert(tileId+1) + '-' + prop)
+      # alert(window.Map.tileIdConvert(tileId+1) + '-' + prop)
     else
       paths = window.Map.makePath(tileId)
       if paths.length
@@ -233,6 +233,8 @@ class window.Map
   @showDestination: (elem) ->
     $('.destination').remove()
     $(elem).append('<img class="destination" src="../resources/destination.png" />')
+    destination = $('.destination')[0]
+    keyframes.play destination, 'destinationRotate 1000 linear 0 infinite normal forwards'
     
   @makePath: (toTileId) ->
     totalMapSize = @mapData.width * @mapData.height

@@ -287,9 +287,8 @@
       if (e.button === 2) {
         prop = 'none';
         if (prop2 = window.Map.tileProperty(tileId + 1)) {
-          prop = prop2.property;
+          return prop = prop2.property;
         }
-        return alert(window.Map.tileIdConvert(tileId + 1) + '-' + prop);
       } else {
         paths = window.Map.makePath(tileId);
         if (paths.length) {
@@ -310,8 +309,12 @@
     };
 
     Map.showDestination = function(elem) {
+      var destination;
+
       $('.destination').remove();
-      return $(elem).append('<img class="destination" src="../resources/destination.png" />');
+      $(elem).append('<img class="destination" src="../resources/destination.png" />');
+      destination = $('.destination')[0];
+      return keyframes.play(destination, 'destinationRotate 1000 linear 0 infinite normal forwards');
     };
 
     Map.makePath = function(toTileId) {
