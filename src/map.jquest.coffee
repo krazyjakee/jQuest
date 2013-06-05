@@ -8,6 +8,8 @@ class window.Map
   
   @mapData: false
   
+  @mapBoard: []
+  
   @renderedTiles: []
   
   @tileProperties: []
@@ -38,6 +40,8 @@ class window.Map
     window.Map.drawMap(m)
     if typeof window.Map.playerTile == 'object'
       window.Map.playerTile = window.Map.tileIdConvert(window.Map.playerTile)
+    window.Map.makeBoard()
+    window.Map.setFocus(window.Map.playerTile,false,true)
     window.Character.loadSprite(window.Character.settings.playerSprite, window.Character.loadPlayer)
     $(m).fadeIn('slow')
     if callback
@@ -51,9 +55,35 @@ class window.Map
     @mapData = false
     @renderedTiles = []
     @tileProperties = []
+    @mapBoard = [];
     
-  
+  @makeBoard: () ->
+    board = [];
+    for y in [0..(Map.mapData.height-1)] by 1
+      board[y] = []
+      for x in [0..(Map.mapData.width-1)] by 1
+        tile = @tileIdConvert([x,y])
+        if prop = @tileProperties[tile]
+          prop = prop.property
+          if prop == 'block'
+            board[y][x] = 1
+            if @showBlocked
+              tileidc = this.tileIdConvert([x,y])
+              $("#tile0-#{tileidc}").css('background','red')
+        else
+          board[y][x] = 0
+    window.Map.mapBoard = board;
+          
   @drawMap: (targetElem) ->
+    mapSize = [@mapData.tilewidth * @mapData.width, @mapData.tileheight * @mapData.height]
+    $(targetElem).css('width', mapSize[0] + 'px').css('height', mapSize[1] + 'px')
+    
+    halfMapwidth = mapSize[0] / 2
+    halfMapHeight = mapSize[1] / 2
+    halfWidth = $('.viewport').width() / 2
+    halfHeight = $('.viewport').height() / 2
+    
+    $(targetElem).css('left', halfWidth - halfMapwidth + 'px').css('top', halfHeight - halfMapHeight + 'px')
     for layer,index in @mapData.layers
       if layer.type == "tilelayer"
         $(targetElem).append("<div class=\"layer\" id=\"layer#{index}\" />")
@@ -62,7 +92,7 @@ class window.Map
         for tile, i in layer.data
           $(currentLayer).append("<div id=\"tile#{index}-#{i}\" class=\"tile\" />")
           @drawTile(index, tile, i)
-        $(currentLayer).css('width',@mapData.tilewidth * @mapData.width + 'px').css('height',@mapData.tileheight * @mapData.height + 'px')
+        $(currentLayer).css('width', mapSize[0] + 'px').css('height', mapSize[1] + 'px')
         $('.tile').width(@mapData.tilewidth).height(@mapData.tileheight)
         $('.layer:last').find('.tile').mousedown(@tileClick)
         $('#maploading').remove()
@@ -106,7 +136,7 @@ class window.Map
       $(target).css('background-image',"url(#{setData.image})")
       $(target).css('background-position',"-#{offset.x}px -#{offset.y}px")
 
-  @setFocus: (tileId, duration) ->
+  @setFocus: (tileId, duration = false, instant = false) ->
     loc = @tileIdConvert(tileId)
     curloc = $('.layer:first').position()
     maxwidth = (Map.mapData.width*32) - $('.viewport').width()
@@ -124,15 +154,17 @@ class window.Map
     if loc[0] > maxwidth
       loc[0]=maxwidth
     
-    @isMoving = true
-    
-    $('.layer-container').stop()
-    $('.layer-container').animate({
-      top: "-"+loc[1]+"px",
-      left: "-"+loc[0]+"px"
-    }, duration, ->
-      @isMoving = false
-    )
+    if instant
+      $('.layer-container').css({left:"-"+loc[0]+"px",top:"-"+loc[1]+"px"});
+    else
+      @isMoving = true
+      $('.layer-container').stop()
+      $('.layer-container').animate({
+        top: "-"+loc[1]+"px",
+        left: "-"+loc[0]+"px"
+      }, duration, ->
+        @isMoving = false
+      )
     
   @tileIdConvert: (tileInput) ->
     if typeof tileInput == 'object'
@@ -177,7 +209,7 @@ class window.Map
   
   @tileClick: (e) ->
     e.preventDefault()
-    tileId = $(this).attr('id')
+    tileId = $(@).attr('id')
     tileId = tileId.substr(tileId.lastIndexOf('-')+1)
     tileId++
     if e.button == 2
@@ -194,7 +226,7 @@ class window.Map
           for path, index in paths
             tileId = window.Map.tileIdConvert([path.x,path.y])
             $("#tile#{Map.playerLayer}-#{tileId}").css('background','red')
-        window.Map.setFocus(tileId, (paths.length * 500))
+        window.Map.setFocus(tileId, (paths.length * 300))
         window.Map.playerTile = tileId
         window.Map.showDestination("#tile#{window.Map.mapData.layers.length-1}-#{tileId-1}")
         
@@ -206,19 +238,4 @@ class window.Map
     totalMapSize = @mapData.width * @mapData.height
     toTileLoc = @tileIdConvert(toTileId)
     fromTileLoc = @tileIdConvert(@playerTile)
-    board = []
-    
-    for y in [0..(Map.mapData.height-1)] by 1
-      board[y] = []
-      for x in [0..(Map.mapData.width-1)] by 1
-        tile = @tileIdConvert([x,y])
-        if prop = @tileProperties[tile]
-          prop = prop.property
-          if prop == 'block'
-            board[y][x] = 1
-            if @showBlocked
-              tileidc = this.tileIdConvert([x,y])
-              $("#tile0-#{tileidc}").css('background','red')
-        else
-          board[y][x] = 0
-    return AStar(board, fromTileLoc, toTileLoc, 'Diagonal')
+    return AStar(window.Map.mapBoard, fromTileLoc, toTileLoc, 'Diagonal')

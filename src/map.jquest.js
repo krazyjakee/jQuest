@@ -11,6 +11,8 @@
 
     Map.mapData = false;
 
+    Map.mapBoard = [];
+
     Map.renderedTiles = [];
 
     Map.tileProperties = [];
@@ -47,6 +49,8 @@
       if (typeof window.Map.playerTile === 'object') {
         window.Map.playerTile = window.Map.tileIdConvert(window.Map.playerTile);
       }
+      window.Map.makeBoard();
+      window.Map.setFocus(window.Map.playerTile, false, true);
       window.Character.loadSprite(window.Character.settings.playerSprite, window.Character.loadPlayer);
       $(m).fadeIn('slow');
       if (callback) {
@@ -66,12 +70,45 @@
       });
       this.mapData = false;
       this.renderedTiles = [];
-      return this.tileProperties = [];
+      this.tileProperties = [];
+      return this.mapBoard = [];
+    };
+
+    Map.makeBoard = function() {
+      var board, prop, tile, tileidc, x, y, _i, _j, _ref, _ref1;
+
+      board = [];
+      for (y = _i = 0, _ref = Map.mapData.height - 1; _i <= _ref; y = _i += 1) {
+        board[y] = [];
+        for (x = _j = 0, _ref1 = Map.mapData.width - 1; _j <= _ref1; x = _j += 1) {
+          tile = this.tileIdConvert([x, y]);
+          if (prop = this.tileProperties[tile]) {
+            prop = prop.property;
+            if (prop === 'block') {
+              board[y][x] = 1;
+              if (this.showBlocked) {
+                tileidc = this.tileIdConvert([x, y]);
+                $("#tile0-" + tileidc).css('background', 'red');
+              }
+            }
+          } else {
+            board[y][x] = 0;
+          }
+        }
+      }
+      return window.Map.mapBoard = board;
     };
 
     Map.drawMap = function(targetElem) {
-      var currentLayer, i, index, layer, tile, _i, _j, _len, _len1, _ref, _ref1, _results;
+      var currentLayer, halfHeight, halfMapHeight, halfMapwidth, halfWidth, i, index, layer, mapSize, tile, _i, _j, _len, _len1, _ref, _ref1, _results;
 
+      mapSize = [this.mapData.tilewidth * this.mapData.width, this.mapData.tileheight * this.mapData.height];
+      $(targetElem).css('width', mapSize[0] + 'px').css('height', mapSize[1] + 'px');
+      halfMapwidth = mapSize[0] / 2;
+      halfMapHeight = mapSize[1] / 2;
+      halfWidth = $('.viewport').width() / 2;
+      halfHeight = $('.viewport').height() / 2;
+      $(targetElem).css('left', halfWidth - halfMapwidth + 'px').css('top', halfHeight - halfMapHeight + 'px');
       _ref = this.mapData.layers;
       _results = [];
       for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
@@ -85,7 +122,7 @@
             $(currentLayer).append("<div id=\"tile" + index + "-" + i + "\" class=\"tile\" />");
             this.drawTile(index, tile, i);
           }
-          $(currentLayer).css('width', this.mapData.tilewidth * this.mapData.width + 'px').css('height', this.mapData.tileheight * this.mapData.height + 'px');
+          $(currentLayer).css('width', mapSize[0] + 'px').css('height', mapSize[1] + 'px');
           $('.tile').width(this.mapData.tilewidth).height(this.mapData.tileheight);
           $('.layer:last').find('.tile').mousedown(this.tileClick);
           _results.push($('#maploading').remove());
@@ -142,9 +179,15 @@
       }
     };
 
-    Map.setFocus = function(tileId, duration) {
+    Map.setFocus = function(tileId, duration, instant) {
       var curloc, loc, maxheight, maxwidth;
 
+      if (duration == null) {
+        duration = false;
+      }
+      if (instant == null) {
+        instant = false;
+      }
       loc = this.tileIdConvert(tileId);
       curloc = $('.layer:first').position();
       maxwidth = (Map.mapData.width * 32) - $('.viewport').width();
@@ -163,14 +206,21 @@
       if (loc[0] > maxwidth) {
         loc[0] = maxwidth;
       }
-      this.isMoving = true;
-      $('.layer-container').stop();
-      return $('.layer-container').animate({
-        top: "-" + loc[1] + "px",
-        left: "-" + loc[0] + "px"
-      }, duration, function() {
-        return this.isMoving = false;
-      });
+      if (instant) {
+        return $('.layer-container').css({
+          left: "-" + loc[0] + "px",
+          top: "-" + loc[1] + "px"
+        });
+      } else {
+        this.isMoving = true;
+        $('.layer-container').stop();
+        return $('.layer-container').animate({
+          top: "-" + loc[1] + "px",
+          left: "-" + loc[0] + "px"
+        }, duration, function() {
+          return this.isMoving = false;
+        });
+      }
     };
 
     Map.tileIdConvert = function(tileInput) {
@@ -252,7 +302,7 @@
               $("#tile" + Map.playerLayer + "-" + tileId).css('background', 'red');
             }
           }
-          window.Map.setFocus(tileId, paths.length * 500);
+          window.Map.setFocus(tileId, paths.length * 300);
           window.Map.playerTile = tileId;
           return window.Map.showDestination("#tile" + (window.Map.mapData.layers.length - 1) + "-" + (tileId - 1));
         }
@@ -265,31 +315,12 @@
     };
 
     Map.makePath = function(toTileId) {
-      var board, fromTileLoc, prop, tile, tileidc, toTileLoc, totalMapSize, x, y, _i, _j, _ref, _ref1;
+      var fromTileLoc, toTileLoc, totalMapSize;
 
       totalMapSize = this.mapData.width * this.mapData.height;
       toTileLoc = this.tileIdConvert(toTileId);
       fromTileLoc = this.tileIdConvert(this.playerTile);
-      board = [];
-      for (y = _i = 0, _ref = Map.mapData.height - 1; _i <= _ref; y = _i += 1) {
-        board[y] = [];
-        for (x = _j = 0, _ref1 = Map.mapData.width - 1; _j <= _ref1; x = _j += 1) {
-          tile = this.tileIdConvert([x, y]);
-          if (prop = this.tileProperties[tile]) {
-            prop = prop.property;
-            if (prop === 'block') {
-              board[y][x] = 1;
-              if (this.showBlocked) {
-                tileidc = this.tileIdConvert([x, y]);
-                $("#tile0-" + tileidc).css('background', 'red');
-              }
-            }
-          } else {
-            board[y][x] = 0;
-          }
-        }
-      }
-      return AStar(board, fromTileLoc, toTileLoc, 'Diagonal');
+      return AStar(window.Map.mapBoard, fromTileLoc, toTileLoc, 'Diagonal');
     };
 
     return Map;
