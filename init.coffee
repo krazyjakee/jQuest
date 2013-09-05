@@ -1,3 +1,5 @@
+world = game = false
+
 $(window).ready ->
     
   game = new gf.Game 'game',
@@ -6,8 +8,10 @@ $(window).ready ->
     background: 0x000000
     interactive: true
 
-  game.loader.on 'complete', () ->
+  game.loader.on 'complete', ->
     game.loadWorld 'island2'
+    world = game.world
+    Map.center()
     game.render()
 
   game.loader.on 'progress', (e) ->
@@ -17,3 +21,7 @@ $(window).ready ->
     name: 'island2'
     src: 'resources/map/island2.json'
   ]
+
+window.onresize = ->
+  game.renderer.resize(window.innerWidth, window.innerHeight)
+  Map.center()
