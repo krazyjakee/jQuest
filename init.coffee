@@ -23,5 +23,5 @@ $(window).ready ->
   ]
 
 window.onresize = ->
-  game.renderer.resize(window.innerWidth, window.innerHeight)
+  game.resize(window.innerWidth, window.innerHeight)
   Map.center()
