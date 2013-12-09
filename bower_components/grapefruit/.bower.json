@@ -1,0 +1,14 @@
+{
+  "name": "grapefruit",
+  "homepage": "https://github.com/grapefruitjs/grapefruit",
+  "_release": "0545e2ac29",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "0545e2ac2904ea57fef80bd2b23832281c76c6f3"
+  },
+  "_source": "https://github.com/grapefruitjs/grapefruit.git",
+  "_target": "*",
+  "_originalSource": "https://github.com/grapefruitjs/grapefruit.git",
+  "_direct": true
+}
