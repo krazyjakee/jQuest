@@ -12,6 +12,7 @@ $(window).ready(function() {
     renderer: gf.RENDERER.AUTO
   });
   game.load.tilemap('island2', 'resources/map/island2.json', null, gf.FILE_FORMAT.JSON);
+  game.load.image('6Actor_5', 'resources/img/6Actor_5.png', null, gf.ATLAS_FORMAT.JSON_HASH);
   game.load.once('complete', function() {
     var playerChar;
     playerChar = Animation.loadChar('6Actor_5');

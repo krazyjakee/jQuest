@@ -3,55 +3,48 @@ var Animation;
 
 Animation = {
   loadChar: function(name, eight) {
-    var bt, directions, height, pointX, pointY, textures, width, x, y, _i, _j;
+    var baseTexture, directions, height, pointX, pointY, textures, width, x, y, _i, _j;
     if (eight == null) {
       eight = true;
     }
     textures = [];
     directions = ['s', 'w', 'e', 'n', 'sw', 'se', 'nw', 'ne'];
-    bt = gf.BaseTexture('resources/img/' + name + '.png');
+    baseTexture = game.cache.getTexture(name).baseTexture;
     width = 32;
     height = 32;
     for (y = _i = 0; _i < 8; y = ++_i) {
+      textures[directions[y]] = [];
       for (x = _j = 0; _j < 6; x = ++_j) {
         pointX = x * 32;
         pointY = y * 32;
-        textures[directions[y]].push(new gf.Texture(bt, gf.Rectangle(pointX, pointY, width, height)));
+        textures[directions[y]].push(new gf.Texture(baseTexture, gf.Rectangle(pointX, pointY, width, height)));
       }
     }
     return gf.Sprite({
       n: {
-        frames: textures['n'],
-        rate: 2
+        frames: textures['n']
       },
       s: {
-        fames: textures['s'],
-        rate: 2
+        frames: textures['s']
       },
       w: {
-        fames: textures['w'],
-        rate: 2
+        frames: textures['w']
       },
       e: {
-        fames: textures['e'],
-        rate: 2
+        frames: textures['e']
       },
       nw: {
-        fames: textures['nw'],
-        rate: 2
+        frames: textures['nw']
       },
       ne: {
-        fames: textures['ne'],
-        rate: 2
+        frames: textures['ne']
       },
       sw: {
-        fames: textures['sw'],
-        rate: 2
+        frames: textures['sw']
       },
       se: {
-        fames: textures['se'],
-        rate: 2
+        frames: textures['se']
       }
-    }, 1000);
+    }, 1000, 's');
   }
 };
