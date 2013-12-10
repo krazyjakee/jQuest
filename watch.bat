@@ -1,2 +1,2 @@
 @title = jQuest Coffeescript Watcher
-coffee -o js -w coffee
+coffee -o js -w -b coffee

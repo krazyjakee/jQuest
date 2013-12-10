@@ -2,26 +2,21 @@ world = game = false
 
 $(window).ready ->
     
+  gf.Texture.SCALE_MODE.DEFAULT = gf.Texture.SCALE_MODE.NEAREST
+
   game = new gf.Game 'game',
     width: window.innerWidth
     height: window.innerHeight
     background: 0x000000
-    interactive: true
+    renderer: gf.RENDERER.AUTO
 
-  game.on 'complete', ->
-    game.loadWorld 'island2'
-    world = game.world
-    Map.center()
+  game.load.tilemap 'island2', 'resources/map/island2.json', null, gf.FILE_FORMAT.JSON
+
+  game.load.once 'complete', ->
     game.render()
 
-  game.on 'progress', (e) ->
-    false
-
-  game.load [
-    name: 'island2'
-    src: 'resources/map/island2.json'
-  ]
+  game.load.start()
 
 window.onresize = ->
-  game.resize(window.innerWidth, window.innerHeight)
-  Map.center()
+  #game.resize(window.innerWidth, window.innerHeight)
+  #Map.center()
