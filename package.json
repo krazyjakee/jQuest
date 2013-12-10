@@ -1,0 +1,17 @@
+{
+  "name": "jQuest",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/krazyjakee/jQuest.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/krazyjakee/jQuest/issues"
+  },
+  "dependencies": {
+    "coffee-script": "latest",
+    "bower": "latest"
+  }
+}
