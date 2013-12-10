@@ -1,17 +1,28 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>jQuest</title>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
     <style>
-      body{ margin: 0; padding: 0; }
+      body{
+        margin: 0 auto; padding: 0; width: 1024px; background: #000;
+      }
+      canvas{
+        outline: none;
+      }
     </style>
   </head>
   <body>
-    
-    <div id="game"></div>
+    <div class="col-lg-12">
+      <div id="game"></div>
+    </div>
+
 
     <script src="bower_components/jquery/jquery.min.js"></script>
     <script src="bower_components/grapefruit/build/gf.js"></script>
     <script src="js/map.jquest.js"></script>
+    <script src="js/input.jquest.js"></script>
+    <script src="js/animation.jquest.js"></script>
     <script src="js/init.js"></script>
   </body>
 </html>
