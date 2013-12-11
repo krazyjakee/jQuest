@@ -17,6 +17,8 @@ $(window).ready(function() {
     var playerChar;
     playerChar = Animation.loadChar('6Actor_5');
     game.world.add.tilemap('island2', true);
+    game.world.addChild(playerChar);
+    playerChar.goto(0, 's').play();
     return game.render();
   });
   return game.load.start();

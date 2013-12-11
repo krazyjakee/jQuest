@@ -16,6 +16,8 @@ $(window).ready ->
   game.load.once 'complete', ->
     playerChar = Animation.loadChar('6Actor_5')
     game.world.add.tilemap('island2', true)
+    game.world.addChild(playerChar)
+    playerChar.goto(0, 's').play()
     game.render()
 
   game.load.start()
