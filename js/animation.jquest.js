@@ -20,7 +20,7 @@ Animation = {
         textures[directions[y]].push(new gf.Texture(baseTexture, gf.Rectangle(pointX, pointY, width, height)));
       }
     }
-    return gf.Sprite({
+    return new gf.Sprite({
       n: {
         frames: textures['n']
       },
