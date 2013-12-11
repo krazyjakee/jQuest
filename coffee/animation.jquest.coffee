@@ -5,6 +5,7 @@ Animation =
     textures = []
     directions = ['s','w','e','n','sw','se','nw','ne']
     baseTexture = game.cache.getTexture(name).baseTexture
+    sprite = new gf.Sprite()
     width = 32
     height = 32
 
@@ -13,25 +14,10 @@ Animation =
       for x in [0...6]
         pointX = x * 32
         pointY = y * 32
-        textures[directions[y]].push new gf.Texture(baseTexture, gf.Rectangle(pointX, pointY, width, height))
+        textures[directions[y]].push new gf.Texture(baseTexture, new gf.Rectangle(pointX, pointY, width, height))
 
-    return new gf.Sprite
-      n:
-        frames: textures['n']
-      s:
-        frames: textures['s']
-      w:
-        frames: textures['w']
-      e:
-        frames: textures['e']
-      nw:
-        frames: textures['nw']
-      ne:
-        frames: textures['ne']
-      sw:
-        frames: textures['sw']
-      se:
-        frames: textures['se']
-    , 1000, 's'
+    (sprite.addAnimation(k, v, 0.08, true) for k, v of textures)
+    sprite.direction = false
+    sprite
 
 

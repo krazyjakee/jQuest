@@ -9,6 +9,41 @@ Input = {
     return game.input.keyboard.on(gf.Keyboard.KEY.D, Input.right);
   },
   up: function(e) {
-    return false;
+    return Input.doMove('n', e.down);
+  },
+  down: function(e) {
+    return Input.doMove('s', e.down);
+  },
+  left: function(e) {
+    return Input.doMove('w', e.down);
+  },
+  right: function(e) {
+    return Input.doMove('e', e.down);
+  },
+  doMove: function(direction, keyDown) {
+    var c;
+    c = Characters.store['player'];
+    if (keyDown) {
+      switch (direction) {
+        case "n":
+          c.position.y -= 2;
+          break;
+        case "s":
+          c.position.y += 2;
+          break;
+        case "e":
+          c.position.x += 2;
+          break;
+        case "w":
+          c.position.x -= 2;
+      }
+      if (c.direction === false) {
+        c.goto(1, direction).play();
+      }
+      return c.direction = direction;
+    } else {
+      c.direction = false;
+      return c.goto(1, direction).stop();
+    }
   }
 };

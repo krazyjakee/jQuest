@@ -1,3 +1,3 @@
-Characters:
+Characters =
   
   store: []
