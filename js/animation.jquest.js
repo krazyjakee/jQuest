@@ -26,6 +26,7 @@ Animation = {
       sprite.addAnimation(k, v, 0.08, true);
     }
     sprite.direction = false;
+    sprite.enablePhysics(game.physics);
     return sprite;
   }
 };

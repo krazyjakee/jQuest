@@ -26,16 +26,16 @@ Input = {
     if (keyDown) {
       switch (direction) {
         case "n":
-          c.position.y -= 2;
+          c.setVelocity(0, c.movespeed);
           break;
         case "s":
-          c.position.y += 2;
+          c.setVelocity(0, -c.movespeed);
           break;
         case "e":
-          c.position.x += 2;
+          c.setVelocity(c.movespeed, 0);
           break;
         case "w":
-          c.position.x -= 2;
+          c.setVelocity(-c.movespeed, 0);
       }
       if (c.direction === false) {
         c.goto(1, direction).play();

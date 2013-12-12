@@ -18,6 +18,7 @@ Animation =
 
     (sprite.addAnimation(k, v, 0.08, true) for k, v of textures)
     sprite.direction = false
+    sprite.enablePhysics(game.physics)
     sprite
 
 

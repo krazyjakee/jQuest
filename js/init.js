@@ -15,6 +15,7 @@ $(window).ready(function() {
   game.load.image('6Actor_5', 'resources/img/6Actor_5.png', null, gf.ATLAS_FORMAT.JSON_HASH);
   game.load.once('complete', function() {
     Characters.store['player'] = Animation.loadChar('6Actor_5');
+    Characters.store['player'].movespeed = 87;
     game.world.add.tilemap('island2', true);
     game.world.addChild(Characters.store['player']);
     Input.setup();

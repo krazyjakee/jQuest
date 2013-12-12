@@ -15,10 +15,10 @@ Input =
     c = Characters.store['player']
     if keyDown
       switch direction
-        when "n" then c.position.y -= 2
-        when "s" then c.position.y += 2
-        when "e" then c.position.x += 2
-        when "w" then c.position.x -= 2
+        when "n" then c.setVelocity 0,c.movespeed
+        when "s" then c.setVelocity 0,-c.movespeed
+        when "e" then c.setVelocity c.movespeed,0
+        when "w" then c.setVelocity -c.movespeed,0
       c.goto(1, direction).play() if c.direction is false
       c.direction = direction
 
