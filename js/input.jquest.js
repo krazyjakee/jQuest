@@ -26,16 +26,16 @@ Input = {
     if (keyDown) {
       switch (direction) {
         case "n":
-          c.setVelocity(0, c.movespeed);
+          c.setVelocity(new gf.Vector(0, -c.movespeed));
           break;
         case "s":
-          c.setVelocity(0, -c.movespeed);
+          c.setVelocity(new gf.Vector(0, c.movespeed));
           break;
         case "e":
-          c.setVelocity(c.movespeed, 0);
+          c.setVelocity(new gf.Vector(c.movespeed, 0));
           break;
         case "w":
-          c.setVelocity(-c.movespeed, 0);
+          c.setVelocity(new gf.Vector(-c.movespeed, 0));
       }
       if (c.direction === false) {
         c.goto(1, direction).play();
@@ -43,6 +43,7 @@ Input = {
       return c.direction = direction;
     } else {
       c.direction = false;
+      c.setVelocity(new gf.Vector(0, 0));
       return c.goto(1, direction).stop();
     }
   }
