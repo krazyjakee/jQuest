@@ -16,8 +16,9 @@ $(window).ready ->
   game.load.once 'complete', ->
     Characters.store['player'] = Animation.loadChar('6Actor_5')
     Characters.store['player'].movespeed = 87
-    game.world.add.tilemap('island2', true)
-    game.world.addChild Characters.store['player']
+    Characters.store['player'].keysDown = {}
+    tilemap = game.world.add.tilemap('island2', true)
+    tilemap.findLayer('Player').addChild Characters.store['player']
     Input.setup()
     game.render()
 

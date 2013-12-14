@@ -21,30 +21,94 @@ Input = {
     return Input.doMove('e', e.down);
   },
   doMove: function(direction, keyDown) {
-    var c;
+    var Keys, c, k, m, setvel, v, _ref, _ref1;
     c = Characters.store['player'];
+    setvel = function(x, y) {
+      var v;
+      v = new gf.Vector(x, y);
+      c.velocity = v;
+      return c.setVelocity(v);
+    };
     if (keyDown) {
+      c.keysDown[direction] = true;
+      m = c.movespeed;
+      _ref = c.keysDown;
+      for (k in _ref) {
+        v = _ref[k];
+        if (v === true && k !== direction[0]) {
+          if (k === 'n') {
+            direction = 'n' + direction[0];
+          }
+          if (k === 's') {
+            direction = 's' + direction[0];
+          }
+          if (k === 'w') {
+            direction = direction[0] + 'w';
+          }
+          if (k === 'e') {
+            direction = direction[0] + 'e';
+          }
+        }
+      }
       switch (direction) {
         case "n":
-          c.setVelocity(new gf.Vector(0, -c.movespeed));
+          setvel(0, -m);
           break;
         case "s":
-          c.setVelocity(new gf.Vector(0, c.movespeed));
+          setvel(0, m);
           break;
         case "e":
-          c.setVelocity(new gf.Vector(c.movespeed, 0));
+          setvel(m, 0);
           break;
         case "w":
-          c.setVelocity(new gf.Vector(-c.movespeed, 0));
+          setvel(-m, 0);
+          break;
+        case 'nw':
+          setvel(-m, -m);
+          break;
+        case 'ne':
+          setvel(m, -m);
+          break;
+        case 'sw':
+          setvel(-m, m);
+          break;
+        case 'se':
+          setvel(m, m);
       }
-      if (c.direction === false) {
+      if (c.direction !== direction) {
         c.goto(1, direction).play();
       }
       return c.direction = direction;
     } else {
-      c.direction = false;
-      c.setVelocity(new gf.Vector(0, 0));
-      return c.goto(1, direction).stop();
+      switch (direction) {
+        case "n":
+          setvel(c.velocity.x, 0);
+          break;
+        case "s":
+          setvel(c.velocity.x, 0);
+          break;
+        case "e":
+          setvel(0, c.velocity.y);
+          break;
+        case "w":
+          setvel(0, c.velocity.y);
+      }
+      c.keysDown[direction] = false;
+      Keys = false;
+      _ref1 = c.keysDown;
+      for (k in _ref1) {
+        v = _ref1[k];
+        if (v) {
+          Keys = k;
+          break;
+        }
+      }
+      if (Keys) {
+        c.goto(1, Keys).play();
+      } else {
+        c.goto(1, direction).stop();
+      }
+      return c.direction = false;
     }
   }
 };

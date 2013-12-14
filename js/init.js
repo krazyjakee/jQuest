@@ -14,10 +14,12 @@ $(window).ready(function() {
   game.load.tilemap('island2', 'resources/map/island2.json', null, gf.FILE_FORMAT.JSON);
   game.load.image('6Actor_5', 'resources/img/6Actor_5.png', null, gf.ATLAS_FORMAT.JSON_HASH);
   game.load.once('complete', function() {
+    var tilemap;
     Characters.store['player'] = Animation.loadChar('6Actor_5');
     Characters.store['player'].movespeed = 87;
-    game.world.add.tilemap('island2', true);
-    game.world.addChild(Characters.store['player']);
+    Characters.store['player'].keysDown = {};
+    tilemap = game.world.add.tilemap('island2', true);
+    tilemap.findLayer('Player').addChild(Characters.store['player']);
     Input.setup();
     return game.render();
   });
