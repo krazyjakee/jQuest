@@ -18,6 +18,7 @@ $(window).ready(function() {
     Characters.store['player'] = Animation.loadChar('6Actor_5');
     Characters.store['player'].movespeed = 87;
     Characters.store['player'].keysDown = {};
+    game.camera.follow(Characters.store['player']);
     tilemap = game.world.add.tilemap('island2', true);
     tilemap.findLayer('Player').addChild(Characters.store['player']);
     Input.setup();
