@@ -13,7 +13,7 @@
   ],
   "dependencies": {
     "jquery": "latest",
-    "grapefruit": "https://github.com/grapefruitjs/grapefruit.git",
+    "grapefruit": "latest",
     "bootstrap": "latest"
   }
 }

@@ -15,11 +15,11 @@
     <div id="hd" class="yui3-g header">
         <div class="yui3-u-3-4">
             
-                <h1><img src="https://en.gravatar.com/userimage/49218683/8654d0c767f327312ebb1ace7f5a8d8d.png" title="GrapeFruit Game Engine"></h1>
+                <h1><img src="http://www.gravatar.com/avatar/e60ee7bcb380d1ab175251890046b3d8.png" title="GrapeFruit Game Engine"></h1>
             
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: v0.1.0</em>
+            <em>API Docs for: v0.1.1</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -121,6 +121,8 @@
             
                 <li><a href="../classes/PhysicsTarget.html">PhysicsTarget</a></li>
             
+                <li><a href="../classes/pkg.html">pkg</a></li>
+            
                 <li><a href="../classes/plugin.html">plugin</a></li>
             
                 <li><a href="../classes/Pointer.html">Pointer</a></li>
@@ -162,8 +164,6 @@
                 <li><a href="../classes/utils.html">utils</a></li>
             
                 <li><a href="../classes/Vector.html">Vector</a></li>
-            
-                <li><a href="../classes/version.html">version</a></li>
             
                 <li><a href="../classes/World.html">World</a></li>
             
@@ -214,7 +214,7 @@
 
     
         <div class="foundat">
-            Defined in: <a href="../files/src_physics_PhysicsTarget.js.html#l1"><code>src\physics\PhysicsTarget.js:1</code></a>
+            Defined in: <a href="../files/src_physics_PhysicsTarget.js.html#l3"><code>src\physics\PhysicsTarget.js:3</code></a>
         </div>
     
 
@@ -265,7 +265,7 @@
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l1"><code>src\physics\PhysicsTarget.js:1</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l3"><code>src\physics\PhysicsTarget.js:3</code></a>
         
         </p>
 
@@ -381,6 +381,13 @@
                                 
                             </li>
                         
+                            <li class="index-item property private">
+                                <a href="#property__velocity">_velocity</a>
+
+                                
+                                
+                            </li>
+                        
                             <li class="index-item property">
                                 <a href="#property_inertia">inertia</a>
 
@@ -435,167 +442,12 @@
     <h3 class="name"><code>disablePhysics</code></h3>
 
     
-        <span class="paren">()</span>
-    
-
-    
-        <span class="returns-inline">
-            <span class="type">Mixed</span>
-        </span>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <span class="flag chainable">chainable</span>
-    
-
-    
-        <span class="flag async">async</span>
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="../files/src_physics_PhysicsTarget.js.html#l83"><code>src\physics\PhysicsTarget.js:83</code></a>
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Disbales physics for this sprite</p>
-
-    </div>
-
-    
-
-    
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                
-                    
-                        <span class="type">Mixed</span>:
-                    
-                    <p>Returns itself.</p>
-
-                
-            </div>
-        </div>
-    
-
-    
-</div>
-
-                
-                    <div id="method_disablePhysics" class="method item">
-    <h3 class="name"><code>disablePhysics</code></h3>
-
-    
-        <span class="paren">()</span>
-    
-
-    
-        <span class="returns-inline">
-            <span class="type">Mixed</span>
-        </span>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <span class="flag chainable">chainable</span>
-    
-
-    
-        <span class="flag async">async</span>
-    
-
-    <div class="meta">
-        
-            
-                
-                <p>
-                
-                Defined in
-                
-            
-        
-        
-        <a href="../files/src_physics_PhysicsTarget.js.html#l100"><code>src\physics\PhysicsTarget.js:100</code></a>
-        
-        </p>
-
-
-        
-
-        
-    </div>
-
-    <div class="description">
-        <p>Reindexes the collisions for this sprite, useful when moving the sprite a great deal
-(like to a new world)</p>
-
-    </div>
-
-    
-
-    
-        <div class="returns">
-            <h4>Returns:</h4>
-
-            <div class="returns-description">
-                
-                    
-                        <span class="type">Mixed</span>:
-                    
-                    <p>Returns itself.</p>
-
-                
-            </div>
-        </div>
-    
-
-    
-</div>
-
-                
-                    <div id="method_enablePhysics" class="method item">
-    <h3 class="name"><code>enablePhysics</code></h3>
-
-    
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
             
                 <li class="arg">
                     
-                        <code>system</code>
+                        <code>callback</code>
                     
                 </li>
             
@@ -636,7 +488,236 @@
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l40"><code>src\physics\PhysicsTarget.js:40</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l97"><code>src\physics\PhysicsTarget.js:97</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Disbales physics for this sprite</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">callback</code>
+                        <span class="type">Function</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The callback function to call after physics have been disabled</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">Mixed</span>:
+                    
+                    <p>Returns itself.</p>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_disablePhysics" class="method item">
+    <h3 class="name"><code>disablePhysics</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>callback</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">Mixed</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <span class="flag chainable">chainable</span>
+    
+
+    
+        <span class="flag async">async</span>
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_physics_PhysicsTarget.js.html#l115"><code>src\physics\PhysicsTarget.js:115</code></a>
+        
+        </p>
+
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>Reindexes the collisions for this sprite, useful when moving the sprite a great deal
+(like to a new world)</p>
+
+    </div>
+
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">callback</code>
+                        <span class="type">Function</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The callback function to call after the sprite has been reindexed</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
+    
+
+    
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                
+                    
+                        <span class="type">Mixed</span>:
+                    
+                    <p>Returns itself.</p>
+
+                
+            </div>
+        </div>
+    
+
+    
+</div>
+
+                
+                    <div id="method_enablePhysics" class="method item">
+    <h3 class="name"><code>enablePhysics</code></h3>
+
+    
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>system</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>callback</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
+    
+
+    
+        <span class="returns-inline">
+            <span class="type">Mixed</span>
+        </span>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <span class="flag chainable">chainable</span>
+    
+
+    
+        <span class="flag async">async</span>
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_physics_PhysicsTarget.js.html#l53"><code>src\physics\PhysicsTarget.js:53</code></a>
         
         </p>
 
@@ -667,6 +748,22 @@
 
                     <div class="param-description">
                         <p>The system for the sprite to be in</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">callback</code>
+                        <span class="type">Function</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The callback function to call after physics have been enabled</p>
 
                     </div>
 
@@ -745,7 +842,7 @@
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l118"><code>src\physics\PhysicsTarget.js:118</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l134"><code>src\physics\PhysicsTarget.js:134</code></a>
         
         </p>
 
@@ -860,7 +957,7 @@
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l168"><code>src\physics\PhysicsTarget.js:168</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l190"><code>src\physics\PhysicsTarget.js:190</code></a>
         
         </p>
 
@@ -884,13 +981,14 @@
                 <li class="param">
                     
                         <code class="param-name">x</code>
-                        <span class="type">Number</span>
+                        <span class="type">Number | <a href="..\classes\Vector.html" class="crosslink">Vector</a></span>
                     
 
                     
 
                     <div class="param-description">
-                         
+                        <p>The x coord to set position to, if a Vector is passed the y param is ignored</p>
+
                     </div>
 
                     
@@ -905,7 +1003,8 @@
                     
 
                     <div class="param-description">
-                         
+                        <p>The y coord to set position to</p>
+
                     </div>
 
                     
@@ -983,7 +1082,7 @@
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l150"><code>src\physics\PhysicsTarget.js:150</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l172"><code>src\physics\PhysicsTarget.js:172</code></a>
         
         </p>
 
@@ -1053,7 +1152,13 @@
             
                 <li class="arg">
                     
-                        <code>velocity</code>
+                        <code>x</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>y</code>
                     
                 </li>
             
@@ -1092,7 +1197,7 @@
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l134"><code>src\physics\PhysicsTarget.js:134</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l150"><code>src\physics\PhysicsTarget.js:150</code></a>
         
         </p>
 
@@ -1115,14 +1220,30 @@
             
                 <li class="param">
                     
-                        <code class="param-name">velocity</code>
-                        <span class="type"><a href="..\classes\Vector.html" class="crosslink">Vector</a></span>
+                        <code class="param-name">x</code>
+                        <span class="type">Number | <a href="..\classes\Vector.html" class="crosslink">Vector</a></span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>The new velocity of the object</p>
+                        <p>The x coord to set the velocity to, if a Vector is passed the y param is ignored</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">y</code>
+                        <span class="type">Number</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The y coord to set the velocity to</p>
 
                     </div>
 
@@ -1186,7 +1307,7 @@
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l8"><code>src\physics\PhysicsTarget.js:8</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l10"><code>src\physics\PhysicsTarget.js:10</code></a>
         
         </p>
 
@@ -1206,6 +1327,54 @@
 
     
         <p><strong>Default:</strong> {}</p>
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property__velocity" class="property item private">
+    <h3 class="name"><code>_velocity</code></h3>
+    <span class="type"><a href="..\classes\Vector.html" class="crosslink">Vector</a></span>
+
+    
+
+    
+        <span class="flag private">private</span>
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                
+                <p>
+                
+                Defined in
+                
+            
+        
+        
+        <a href="../files/src_physics_PhysicsTarget.js.html#l42"><code>src\physics\PhysicsTarget.js:42</code></a>
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>The internal velocity value, used as a reusable vector for the setVelocity function. Setting
+this directly <em>has no effect</em>.</p>
+
+    </div>
+
     
 
     
@@ -1237,7 +1406,7 @@
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l31"><code>src\physics\PhysicsTarget.js:31</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l33"><code>src\physics\PhysicsTarget.js:33</code></a>
         
         </p>
 
@@ -1284,7 +1453,7 @@
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l21"><code>src\physics\PhysicsTarget.js:21</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l23"><code>src\physics\PhysicsTarget.js:23</code></a>
         
         </p>
 
@@ -1341,7 +1510,7 @@
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l188"><code>src\physics\PhysicsTarget.js:188</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l212"><code>src\physics\PhysicsTarget.js:212</code></a>
         
         </p>
 
@@ -1461,7 +1630,7 @@
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l205"><code>src\physics\PhysicsTarget.js:205</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l229"><code>src\physics\PhysicsTarget.js:229</code></a>
         
         </p>
 

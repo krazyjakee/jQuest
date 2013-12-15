@@ -1,13 +1,14 @@
 {
   "name": "grapefruit",
   "homepage": "https://github.com/grapefruitjs/grapefruit",
-  "_release": "0545e2ac29",
+  "version": "0.1.1",
+  "_release": "0.1.1",
   "_resolution": {
-    "type": "branch",
-    "branch": "master",
-    "commit": "0545e2ac2904ea57fef80bd2b23832281c76c6f3"
+    "type": "version",
+    "tag": "v0.1.1",
+    "commit": "ca434ed45569d355eb9c1b2a3b01a073cea9841d"
   },
-  "_source": "https://github.com/grapefruitjs/grapefruit.git",
+  "_source": "git://github.com/grapefruitjs/grapefruit.git",
   "_target": "*",
-  "_originalSource": "https://github.com/grapefruitjs/grapefruit.git"
+  "_originalSource": "grapefruit"
 }

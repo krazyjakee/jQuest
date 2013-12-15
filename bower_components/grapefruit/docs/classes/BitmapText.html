@@ -15,11 +15,11 @@
     <div id="hd" class="yui3-g header">
         <div class="yui3-u-3-4">
             
-                <h1><img src="https://en.gravatar.com/userimage/49218683/8654d0c767f327312ebb1ace7f5a8d8d.png" title="GrapeFruit Game Engine"></h1>
+                <h1><img src="http://www.gravatar.com/avatar/e60ee7bcb380d1ab175251890046b3d8.png" title="GrapeFruit Game Engine"></h1>
             
         </div>
         <div class="yui3-u-1-4 version">
-            <em>API Docs for: v0.1.0</em>
+            <em>API Docs for: v0.1.1</em>
         </div>
     </div>
     <div id="bd" class="yui3-g">
@@ -121,6 +121,8 @@
             
                 <li><a href="../classes/PhysicsTarget.html">PhysicsTarget</a></li>
             
+                <li><a href="../classes/pkg.html">pkg</a></li>
+            
                 <li><a href="../classes/plugin.html">plugin</a></li>
             
                 <li><a href="../classes/Pointer.html">Pointer</a></li>
@@ -162,8 +164,6 @@
                 <li><a href="../classes/utils.html">utils</a></li>
             
                 <li><a href="../classes/Vector.html">Vector</a></li>
-            
-                <li><a href="../classes/version.html">version</a></li>
             
                 <li><a href="../classes/World.html">World</a></li>
             
@@ -690,6 +690,13 @@ You can generate the fnt files using <a href="http://www.angelcode.com/products/
                         
                             <li class="index-item property private">
                                 <a href="#property__text">_text</a>
+
+                                
+                                
+                            </li>
+                        
+                            <li class="index-item property private inherited">
+                                <a href="#property__velocity">_velocity</a>
 
                                 
                                 
@@ -1459,7 +1466,17 @@ You can generate the fnt files using <a href="http://www.angelcode.com/products/
     <h3 class="name"><code>disablePhysics</code></h3>
 
     
-        <span class="paren">()</span>
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+            
+                <li class="arg">
+                    
+                        <code>callback</code>
+                    
+                </li>
+            
+            </ul><span class="paren">)</span>
+        </div>
     
 
     
@@ -1495,7 +1512,7 @@ You can generate the fnt files using <a href="http://www.angelcode.com/products/
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l83"><code>src\physics\PhysicsTarget.js:83</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l97"><code>src\physics\PhysicsTarget.js:97</code></a>
         
         </p>
 
@@ -1510,6 +1527,30 @@ You can generate the fnt files using <a href="http://www.angelcode.com/products/
 
     </div>
 
+    
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+            
+                <li class="param">
+                    
+                        <code class="param-name">callback</code>
+                        <span class="type">Function</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The callback function to call after physics have been disabled</p>
+
+                    </div>
+
+                    
+                </li>
+            
+            </ul>
+        </div>
     
 
     
@@ -1673,6 +1714,12 @@ You can generate the fnt files using <a href="http://www.angelcode.com/products/
                     
                 </li>
             
+                <li class="arg">
+                    
+                        <code>callback</code>
+                    
+                </li>
+            
             </ul><span class="paren">)</span>
         </div>
     
@@ -1707,7 +1754,7 @@ You can generate the fnt files using <a href="http://www.angelcode.com/products/
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l40"><code>src\physics\PhysicsTarget.js:40</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l53"><code>src\physics\PhysicsTarget.js:53</code></a>
         
         </p>
 
@@ -1738,6 +1785,22 @@ You can generate the fnt files using <a href="http://www.angelcode.com/products/
 
                     <div class="param-description">
                         <p>The system for the sprite to be in</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">callback</code>
+                        <span class="type">Function</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The callback function to call after physics have been enabled</p>
 
                     </div>
 
@@ -2766,7 +2829,7 @@ automatically called when the text/style becomes dirty.</p>
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l118"><code>src\physics\PhysicsTarget.js:118</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l134"><code>src\physics\PhysicsTarget.js:134</code></a>
         
         </p>
 
@@ -2878,7 +2941,7 @@ automatically called when the text/style becomes dirty.</p>
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l168"><code>src\physics\PhysicsTarget.js:168</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l190"><code>src\physics\PhysicsTarget.js:190</code></a>
         
         </p>
 
@@ -2902,13 +2965,14 @@ automatically called when the text/style becomes dirty.</p>
                 <li class="param">
                     
                         <code class="param-name">x</code>
-                        <span class="type">Number</span>
+                        <span class="type">Number | <a href="..\classes\Vector.html" class="crosslink">Vector</a></span>
                     
 
                     
 
                     <div class="param-description">
-                        
+                        <p>The x coord to set position to, if a Vector is passed the y param is ignored</p>
+
                     </div>
 
                     
@@ -2923,7 +2987,8 @@ automatically called when the text/style becomes dirty.</p>
                     
 
                     <div class="param-description">
-                        
+                        <p>The y coord to set position to</p>
+
                     </div>
 
                     
@@ -2998,7 +3063,7 @@ automatically called when the text/style becomes dirty.</p>
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l150"><code>src\physics\PhysicsTarget.js:150</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l172"><code>src\physics\PhysicsTarget.js:172</code></a>
         
         </p>
 
@@ -3189,7 +3254,13 @@ automatically called when the text/style becomes dirty.</p>
             
                 <li class="arg">
                     
-                        <code>velocity</code>
+                        <code>x</code>
+                    
+                </li>
+            
+                <li class="arg">
+                    
+                        <code>y</code>
                     
                 </li>
             
@@ -3225,7 +3296,7 @@ automatically called when the text/style becomes dirty.</p>
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l134"><code>src\physics\PhysicsTarget.js:134</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l150"><code>src\physics\PhysicsTarget.js:150</code></a>
         
         </p>
 
@@ -3248,14 +3319,30 @@ automatically called when the text/style becomes dirty.</p>
             
                 <li class="param">
                     
-                        <code class="param-name">velocity</code>
-                        <span class="type"><a href="..\classes\Vector.html" class="crosslink">Vector</a></span>
+                        <code class="param-name">x</code>
+                        <span class="type">Number | <a href="..\classes\Vector.html" class="crosslink">Vector</a></span>
                     
 
                     
 
                     <div class="param-description">
-                        <p>The new velocity of the object</p>
+                        <p>The x coord to set the velocity to, if a Vector is passed the y param is ignored</p>
+
+                    </div>
+
+                    
+                </li>
+            
+                <li class="param">
+                    
+                        <code class="param-name">y</code>
+                        <span class="type">Number</span>
+                    
+
+                    
+
+                    <div class="param-description">
+                        <p>The y coord to set the velocity to</p>
 
                     </div>
 
@@ -3445,7 +3532,7 @@ automatically called when the text/style becomes dirty.</p>
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l8"><code>src\physics\PhysicsTarget.js:8</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l10"><code>src\physics\PhysicsTarget.js:10</code></a>
         
         </p>
 
@@ -3510,6 +3597,51 @@ automatically called when the text/style becomes dirty.</p>
     <div class="description">
         <p>The actual text that is currently rendered, please use the <code>text</code> property
 and do not set this directly.</p>
+
+    </div>
+
+    
+
+    
+
+    
+</div>
+
+                
+                    <div id="property__velocity" class="property item private inherited">
+    <h3 class="name"><code>_velocity</code></h3>
+    <span class="type"><a href="..\classes\Vector.html" class="crosslink">Vector</a></span>
+
+    
+
+    
+        <span class="flag private">private</span>
+    
+
+    
+
+    
+
+    <div class="meta">
+        
+            
+                <p>Inherited from
+                <a href="..\classes\PhysicsTarget.html#property__velocity">PhysicsTarget</a>:
+            
+        
+        
+        <a href="../files/src_physics_PhysicsTarget.js.html#l42"><code>src\physics\PhysicsTarget.js:42</code></a>
+        
+        </p>
+
+        
+
+        
+    </div>
+
+    <div class="description">
+        <p>The internal velocity value, used as a reusable vector for the setVelocity function. Setting
+this directly <em>has no effect</em>.</p>
 
     </div>
 
@@ -3761,7 +3893,7 @@ will use (as it will not need to hit test all the children)</p>
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l31"><code>src\physics\PhysicsTarget.js:31</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l33"><code>src\physics\PhysicsTarget.js:33</code></a>
         
         </p>
 
@@ -3849,7 +3981,7 @@ will use (as it will not need to hit test all the children)</p>
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l21"><code>src\physics\PhysicsTarget.js:21</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l23"><code>src\physics\PhysicsTarget.js:23</code></a>
         
         </p>
 
@@ -4359,7 +4491,7 @@ When set to <code>0</code> the default font values will be used.</p>
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l188"><code>src\physics\PhysicsTarget.js:188</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l212"><code>src\physics\PhysicsTarget.js:212</code></a>
         
         </p>
 
@@ -4862,7 +4994,7 @@ for this callback to be fired, The touch must have started over the displayObjec
             
         
         
-        <a href="../files/src_physics_PhysicsTarget.js.html#l205"><code>src\physics\PhysicsTarget.js:205</code></a>
+        <a href="../files/src_physics_PhysicsTarget.js.html#l229"><code>src\physics\PhysicsTarget.js:229</code></a>
         
         </p>
 
