@@ -37,16 +37,24 @@ Input = {
         v = _ref[k];
         if (v === true && k !== direction[0]) {
           if (k === 'n') {
-            direction = 'n' + direction[0];
+            if (direction[0] !== 's') {
+              direction = 'n' + direction[0];
+            }
           }
           if (k === 's') {
-            direction = 's' + direction[0];
+            if (direction[0] !== 'n') {
+              direction = 's' + direction[0];
+            }
           }
           if (k === 'w') {
-            direction = direction[0] + 'w';
+            if (direction[0] !== 'e') {
+              direction = direction[0] + 'w';
+            }
           }
           if (k === 'e') {
-            direction = direction[0] + 'e';
+            if (direction[0] !== 'w') {
+              direction = direction[0] + 'e';
+            }
           }
         }
       }

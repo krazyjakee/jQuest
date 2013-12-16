@@ -24,10 +24,14 @@ Input =
       m = c.movespeed
       for k,v of c.keysDown
         if v is true and k isnt direction[0]
-          if k is 'n' then direction = 'n' + direction[0]
-          if k is 's' then direction = 's' + direction[0]
-          if k is 'w' then direction = direction[0] + 'w'
-          if k is 'e' then direction = direction[0] + 'e'
+          if k is 'n'
+            direction = 'n' + direction[0] unless direction[0] is 's'
+          if k is 's' 
+            direction = 's' + direction[0] unless direction[0] is 'n'
+          if k is 'w' 
+            direction = direction[0] + 'w' unless direction[0] is 'e'
+          if k is 'e' 
+            direction = direction[0] + 'e' unless direction[0] is 'w'
       switch direction
         when "n" then setvel(0, -m)
         when "s" then setvel(0, m)
@@ -61,3 +65,5 @@ Input =
       else
         c.goto(1, direction).stop()
       c.direction = false
+
+    #$('#dev').html(direction)
