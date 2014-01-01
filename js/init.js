@@ -14,13 +14,27 @@ $(window).ready(function() {
   game.load.tilemap('island2', 'resources/map/island2.json', null, gf.FILE_FORMAT.JSON);
   game.load.image('6Actor_5', 'resources/img/6Actor_5.png', null, gf.ATLAS_FORMAT.JSON_HASH);
   game.load.once('complete', function() {
-    var tilemap;
+    var row, tile, tilemap, _i, _j, _len, _len1, _ref;
     Characters.store['player'] = Animation.loadChar('6Actor_5');
     Characters.store['player'].movespeed = 87;
     Characters.store['player'].keysDown = {};
+    Characters.store['player'].hitArea = new gf.Rectangle(0, 0, 32, 32);
     game.camera.follow(Characters.store['player']);
     tilemap = game.world.add.tilemap('island2', true);
     tilemap.findLayer('Player').addChild(Characters.store['player']);
+    _ref = tilemap.findLayer('Ground').tiles;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      row = _ref[_i];
+      if (row != null) {
+        for (_j = 0, _len1 = row.length; _j < _len1; _j++) {
+          tile = row[_j];
+          if (tile != null) {
+            tile.interactive = true;
+            tile.click = Map.tileClick;
+          }
+        }
+      }
+    }
     Input.setup();
     return game.render();
   });
