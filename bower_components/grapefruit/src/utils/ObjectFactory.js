@@ -1,10 +1,8 @@
 var inherit = require('./inherit'),
-    GuiItem = require('../gui/GuiItem'),
     Sprite = require('../display/Sprite'),
     Tilemap = require('../tilemap/Tilemap'),
     Rectangle = require('../geom/Rectangle'),
-    BitmapText = require('../text/BitmapText'),
-    C = require('../constants');
+    BitmapText = require('../text/BitmapText');
 
 /**
  * The object factory makes it simple to create and add objects to a parent. One is added
@@ -90,20 +88,7 @@ inherit(ObjectFactory, Object, {
      */
     tilemap: function(key, constrain) {
         var obj = this.game.cache.getTilemap(key) || {},
-            fmt = obj.format,
-            data = obj.data,
-            txs = obj.textures,
-            tilemap;
-
-        if(fmt === C.FILE_FORMAT.JSON) {
-            tilemap = new Tilemap(this.state, data, txs);
-        }
-        else if(fmt === C.FILE_FORMAT.XML) {
-            tilemap = Tilemap.fromXML(this.state, data, txs);
-        }
-        else if(fmt === C.FILE_FORMAT.CSV) {
-            tilemap = Tilemap.fromCSV(this.state, data, txs);
-        }
+            tilemap = new Tilemap(this.state, obj.data, obj.textures);
 
         if(constrain) {
             this.state.camera.constrain(new Rectangle(0, 0, tilemap.realSize.x, tilemap.realSize.y));
@@ -120,20 +105,6 @@ inherit(ObjectFactory, Object, {
         tilemap._cachekey = key;
 
         return this.parent.addChild(tilemap);
-    },
-    /**
-     * Creates a new gui item and adds it to the Camera's GUI
-     *
-     * @method gui
-     * @param texture {String|Texture} The texture for the item, or the key for one in the cache
-     * @param interactive {Boolean} Can the item be interacted with by mouse (clicked, dragged, etc)
-     * @return {GuiItem} The new gui item added
-     */
-    gui: function(tx, interact) {
-        if(typeof tx === 'string')
-            tx = this.game.cache.getTexture(tx);
-
-        return this.parent.addChild(new GuiItem(tx, interact));
     },
     /**
      * Creates a new instance of BitmapText

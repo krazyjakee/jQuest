@@ -2,7 +2,7 @@ var EventEmitter = require('../utils/EventEmitter'),
     PhysicsTarget = require('../physics/PhysicsTarget'),
     utils = require('../utils/utils'),
     inherit = require('../utils/inherit'),
-    PIXI = require('../vendor/pixi');
+    PIXI = require('pixi.js');
 
 /**
  * The base display object, that anything being put on the screen inherits from
@@ -11,7 +11,6 @@ var EventEmitter = require('../utils/EventEmitter'),
  * @class Container
  * @extends [PIXI.DisplayObjectContainer](http://www.goodboydigital.com/pixijs/docs/classes/DisplayObjectContainer.html)
  * @uses EventEmitter
- * @uses PhysicsTarget
  * @constructor
  */
 var Container = function(settings) {
@@ -224,120 +223,7 @@ inherit(Container, PIXI.DisplayObjectContainer, {
         }
 
         return this;
-    },
-
-    /**
-     * Called whenever a collision occurs
-     *
-     * @method onCollide
-     * @param obj {Sprite|Container} The sprite that you collide with
-     * @param collision {Collision} Collision data object that contains
-     *      information about the intersection
-     * @return {Boolean} If you return `false` explicitly the engine will *not*
-     *      solve the collision. In this way you can make thing "not collide" if
-     *      you don't want their types to collide.
-     */
-    onCollide: function() {
-        /* To be overriden */
     }
 });
 
 module.exports = Container;
-
-//Add event echos
-/*
-['click', 'mousedown', 'mouseup', 'mouseupoutside', 'mouseover', 'mouseout', 'mousemove', 'tap', 'touchstart', 'touchend', 'touchendoutside'].forEach(function(evtname) {
-    Container.prototype[evtname] = module.exports = function(e) {
-        this.emit(evtname, e);
-    };
-});
-*/
-
-/*
- * MOUSE Callbacks
- */
-
-/**
- * A callback that is used when the users clicks on the displayObject with their mouse
- *
- * @event click
- * @param interactionData {InteractionData}
- */
-
-/**
- * A callback that is used when the user clicks the mouse down over the displayObject
- *
- * @event mousedown
- * @param interactionData {InteractionData}
- */
-
-/**
- * A callback that is used when the user releases the mouse that was over the displayObject
- * for this callback to be fired the mouse must have been pressed down over the displayObject
- *
- * @event mouseup
- * @param interactionData {InteractionData}
- */
-
-/**
- * A callback that is used when the user releases the mouse that was over the displayObject but is no longer over the displayObject
- * for this callback to be fired, The touch must have started over the displayObject
- *
- * @event mouseupoutside
- * @param interactionData {InteractionData}
- */
-
-/**
- * A callback that is used when the users mouse rolls over the displayObject
- *
- * @event mouseover
- * @param interactionData {InteractionData}
- */
-
-/**
- * A callback that is used when the users mouse leaves the displayObject
- *
- * @event mouseout
- * @param interactionData {InteractionData}
- */
-
-/**
- * A callback that is used when the user moves the mouse while over the displayObject
- *
- * @event mousemove
- * @param interactionData {InteractionData}
- */
-
-/*
- * TOUCH Callbacks
- */
-
-/**
- * A callback that is used when the users taps on the displayObject with their finger
- * basically a touch version of click
- *
- * @event tap
- * @param interactionData {InteractionData}
- */
-
-/**
- * A callback that is used when the user touch's over the displayObject
- *
- * @event touchstart
- * @param interactionData {InteractionData}
- */
-
-/**
- * A callback that is used when the user releases a touch over the displayObject
- *
- * @event touchend
- * @param interactionData {InteractionData}
- */
-
-/**
- * A callback that is used when the user releases the touch that was over the displayObject
- * for this callback to be fired, The touch must have started over the displayObject
- *
- * @event touchendoutside
- * @param interactionData {InteractionData}
- */

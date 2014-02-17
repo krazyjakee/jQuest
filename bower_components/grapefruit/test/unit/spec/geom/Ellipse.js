@@ -1,2 +1,0 @@
-describe('Ellipse', function() {
-});

@@ -1,4 +1,4 @@
-var Container = require('../display/Container'),
+var SpriteBatch = require('../display/SpriteBatch'),
     Rectangle = require('../geom/Rectangle'),
     Vector = require('../math/Vector'),
     Texture = require('../display/Texture'),
@@ -6,7 +6,8 @@ var Container = require('../display/Container'),
     math = require('../math/math'),
     utils = require('../utils/utils'),
     inherit = require('../utils/inherit'),
-    support = require('../utils/support');
+    support = require('../utils/support'),
+    PIXI = require('pixi.js');
 
 /**
  * The Tilelayer is the visual tiled layer that actually displays on the screen
@@ -15,14 +16,14 @@ var Container = require('../display/Container'),
  * create an instance on your own.
  *
  * @class Tilelayer
- * @extends Container
+ * @extends SpriteBatch
  * @constructor
  * @param map {Tilemap} The tilemap instance that this belongs to
  * @param layer {Object} All the settings for the layer
  */
 //see: https://github.com/GoodBoyDigital/pixi.js/issues/48
 var Tilelayer = function(map, layer) {
-    Container.call(this, layer);
+    SpriteBatch.call(this);
 
     /**
      * The map instance this tilelayer belongs to
@@ -106,7 +107,7 @@ var Tilelayer = function(map, layer) {
      * @type Boolean
      * @default false
      */
-    this.preRender = layer.preRender || this.properties.preRender || false;
+    this.preRender = layer.preRender || this.properties.preRender || this.map.properties.preRender || false;
 
     /**
      * The size of a chunk when pre rendering
@@ -132,9 +133,45 @@ var Tilelayer = function(map, layer) {
     this._buffered = { left: false, right: false, top: false, bottom: false };
     this._panDelta = new Vector();
     this._rendered = new Rectangle();
+
+    this.physicsContainer = new SpriteBatch();
+    this.createPhysicalTiles();
 };
 
-inherit(Tilelayer, Container, {
+inherit(Tilelayer, SpriteBatch, {
+    getBounds: function() {
+        return this.map.getBounds();
+    },
+    createPhysicalTiles: function() {
+        var tid, tex, set, props, tile,
+            szx = this.map.size.x,
+            tsx = this.map.tileSize.x,
+            tsy = this.map.tileSize.y;
+
+        for(var i = 0; i < this.tileIds.length; ++i) {
+            tid = this.tileIds[i];
+            set = this.map.getTileset(tid);
+
+            if(!set) continue;
+
+            props = set.getTileProperties(tid);
+
+            if(!props.mass) continue;
+
+            tex = set.getTileTexture(tid);
+            tile = new Tile(tex);
+            this.physicsContainer.addChild(tile);
+
+            tile.mass = props.mass;
+            tile.hitArea = props.hitArea || set.properties.hitArea;
+            tile.setPosition(
+                ((i % szx) * tsx) + set.tileoffset.x,
+                (math.floor(i / szx) * tsy) + set.tileoffset.y + tsy
+            );
+
+            tile.enablePhysics(this.state.physics);
+        }
+    },
     /**
      * Creates all the tile sprites needed to display the layer
      *
@@ -309,8 +346,8 @@ inherit(Tilelayer, Container, {
         //set rendered area
         this._rendered.x = sx;
         this._rendered.y = sy;
-        this._rendered.width = sw;
-        this._rendered.height = sh;
+        this._rendered.width = sw - 1;
+        this._rendered.height = sh - 1;
 
         //reset buffered status
         this._buffered.left = this._buffered.right = this._buffered.top = this._buffered.bottom = false;
@@ -374,7 +411,7 @@ inherit(Tilelayer, Container, {
      */
     clearTile: function(tile, remove) {
         tile.visible = false;
-        tile.disablePhysics();
+        //tile.disablePhysics();
 
         if(remove)
             this.removeChild(tile);
@@ -395,12 +432,12 @@ inherit(Tilelayer, Container, {
      * @return {Tile} The sprite to display
      */
     moveTileSprite: function(fromTileX, fromTileY, toTileX, toTileY) {
+        //free the tiles we are dealing with
+        this._freeTile(toTileX, toTileY);
+        this._freeTile(fromTileX, fromTileY);
+
         //if off the map, just ignore it
         if(toTileX < 0 || toTileY < 0 || toTileX >= this.map.size.x || toTileY >= this.map.size.y) {
-            //remove the from tile's physics
-            if(this.tiles[fromTileX] && this.tiles[fromTileX][fromTileY]) {
-                this.tiles[fromTileX][fromTileY].disablePhysics();
-            }
             return;
         }
 
@@ -414,11 +451,8 @@ inherit(Tilelayer, Container, {
             hitArea,
             interactive;
 
-        //if no tileset, just ensure the "from" tile is put back in the pool
-        if(!set) {
-            this._freeTile(fromTileX, fromTileY);
-            return;
-        }
+        //if no tileset, return
+        if(!set) return;
 
         //grab some values for the tile
         texture = set.getTileTexture(tileId);
@@ -433,39 +467,31 @@ inherit(Tilelayer, Container, {
         //due to the fact that we use top-left anchors for everything, but tiled uses bottom-left
         //we need to move the position of each tile down by a single map-tile height. That is why
         //there is an addition of "this.map.tileSize.y" to the coords
-        position[1] +=  this.map.tileSize.y;
+        position[1] += this.map.tileSize.y;
 
-        //if there is one to move in the map, lets just move it
-        if(this.tiles[fromTileX] && this.tiles[fromTileX][fromTileY]) {
-            tile = this.tiles[fromTileX][fromTileY];
-            this.tiles[fromTileX][fromTileY] = null;
-            tile.disablePhysics();
-        }
-        //otherwise grab a new tile from the pool
-        else {
-            tile = this._tilePool.pop();
-        }
+        //grab a new tile from the pool
+        tile = this._tilePool.pop();
 
-        //if we couldn't find a tile from the pool, or one to move
-        //then create a new tile
+        //if we couldn't find a tile from the pool, then create a new tile
         if(!tile) {
             tile = new Tile(texture);
             tile.anchor.y = 1;
             this.addChild(tile);
         }
 
-        tile.collisionType = props.type;
+        //tile.collisionType = props.type;
         tile.interactive = interactive;
         tile.hitArea = hitArea;
-        tile.mass = props.mass || 0;
+        //tile.mass = props.mass || 0;
+        tile.blendMode = (props.blendMode || this.properties.blendMode) ? PIXI.blendModes[(props.blendMode || this.properties.blendMode)] : PIXI.blendModes.NORMAL;
 
         tile.setTexture(texture);
         tile.setPosition(position[0], position[1]);
         tile.show();
 
-        if(tile.mass) {
+        /*if(tile.mass) {
             tile.enablePhysics(this.state.physics);
-        }
+        }*/
 
         //pass through all events
         if(interactive) {
@@ -671,7 +697,7 @@ inherit(Tilelayer, Container, {
      * @method destroy
      */
     destroy: function() {
-        Container.prototype.destroy.call(this);
+        SpriteBatch.prototype.destroy.call(this);
 
         this.clearTiles(true);
 

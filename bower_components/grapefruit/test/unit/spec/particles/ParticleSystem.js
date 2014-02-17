@@ -1,2 +1,0 @@
-describe('ParticleSystem', function() {
-});

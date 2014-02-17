@@ -56,18 +56,6 @@ var AudioManager = function(game, parent) {
     this._volume = 1;
 
     /**
-     * The master volume of all the audio playing
-     *
-     * @property volume
-     * @type Number
-     * @default 1
-     */
-    Object.defineProperty(this, 'volume', {
-        get: this.getVolume.bind(this),
-        set: this.setVolume.bind(this)
-    });
-
-    /**
      * The Web Audio API context if we are using it
      *
      * @property ctx
@@ -97,41 +85,6 @@ var AudioManager = function(game, parent) {
 };
 
 inherit(AudioManager, Object, {
-    /**
-     * Returns the current master volume
-     *
-     * @method getVolume
-     */
-    getVolume: function() {
-        return this._volume;
-    },
-    /**
-     * Sets the current master volume
-     *
-     * @method setVolume
-     * @param value {Number}
-     */
-    setVolume: function(v) {
-        v = parseFloat(v, 10);
-
-        if(!isNaN(v) && v >= 0 && v <= 1) {
-            this._volume = v;
-
-            if(support.webAudio)
-                this.masterGain.gain.value = v;
-
-            //go through each audio element and change their volume
-            for(var key in this.sounds) {
-                if(this.sounds.hasOwnProperty(key) && this.sounds[key]._webAudio === false) {
-                    var player = this.sounds[key];
-                    //loop through the audio nodes
-                    for(var i = 0, il = player._nodes.length; i < il; ++i) {
-                        player._nodes[i].volume = player._volume * this._volume;
-                    }
-                }
-            }
-        }
-    },
     /**
      * Mutes all playing audio
      *
@@ -299,6 +252,41 @@ inherit(AudioManager, Object, {
         delete this.sounds[key];
 
         return audio ? audio : false;
+    }
+});
+
+
+/**
+ * The master volume of all the audio playing
+ *
+ * @property volume
+ * @type Number
+ * @default 1
+ */
+Object.defineProperty(AudioManager.prototype, 'volume', {
+    get: function() {
+        return this._volume;
+    },
+    set: function(v) {
+        v = parseFloat(v, 10);
+
+        if(!isNaN(v) && v >= 0 && v <= 1) {
+            this._volume = v;
+
+            if(support.webAudio)
+                this.masterGain.gain.value = v;
+
+            //go through each audio element and change their volume
+            for(var key in this.sounds) {
+                if(this.sounds.hasOwnProperty(key) && this.sounds[key]._webAudio === false) {
+                    var player = this.sounds[key];
+                    //loop through the audio nodes
+                    for(var i = 0, il = player._nodes.length; i < il; ++i) {
+                        player._nodes[i].volume = player._volume * this._volume;
+                    }
+                }
+            }
+        }
     }
 });
 

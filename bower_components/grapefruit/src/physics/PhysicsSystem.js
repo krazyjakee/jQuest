@@ -3,8 +3,9 @@ var Rectangle = require('../geom/Rectangle'),
     Polygon = require('../geom/Polygon'),
     Vector = require('../math/Vector'),
     Tile = require('../tilemap/Tile'),
+    math = require('../math/math'),
     inherit = require('../utils/inherit'),
-    cp = require('../vendor/cp');
+    cp = require('chipmunk');
 
 /**
  * The PhysicsSystem is the wrapper around the chipmunk-js physics library that integrates
@@ -23,8 +24,10 @@ var PhysicsSystem = function(state, options) {
     //default options
     options = options || {};
     options.gravity = options.gravity instanceof Vector ? options.gravity : new Vector(0, 9.87);
-    options.sleepTimeThreshold = options.sleepTimeThreshold !== undefined ? options.sleepTimeThreshold : 0.2;
+    options.iterations = options.iterations || 10;
+    options.sleepTimeThreshold = options.sleepTimeThreshold !== undefined ? options.sleepTimeThreshold : 0.5;
     options.collisionSlop = options.collisionSlop !== undefined ? options.collisionSlop : 0.1;
+    options.stepTime = options.stepTime || (1 / 60);
 
     /**
      * The state instance this system belongs to
@@ -33,6 +36,15 @@ var PhysicsSystem = function(state, options) {
      * @type State
      */
     this.state = state;
+
+    /**
+     * The delta time to use as the constant for physics simulation
+     *
+     * @property stepTime
+     * @type Number
+     * @default (1 / 60)
+     */
+    this.stepTime = options.stepTime;
 
     /**
      * The chipmunk space instance that will run all the physics simulations
@@ -110,6 +122,9 @@ var PhysicsSystem = function(state, options) {
      * @private
      */
     this._skip = 0;
+
+    this._updateNum = 0;
+    this._paused = false;
 };
 
 inherit(PhysicsSystem, Object, {
@@ -203,36 +218,47 @@ inherit(PhysicsSystem, Object, {
             return;
 
         var body = this._createBody(spr),
-            shape = this._createShape(spr, body),
-            control;
-
-        //add control body and constraints
-        if(!body.isStatic()) {
-            var cbody = new cp.Body(Infinity, Infinity), //control body
-                cpivot = new cp.PivotJoint(cbody, body, cp.vzero, cp.vzero),
-                cgear = new cp.GearJoint(cbody, body, 0, 1);
-
-            cpivot.maxBias = 0; //disable join correction
-            cpivot.maxForce = 10000; //emulate linear friction
-
-            cgear.errorBias = 0; //attempt to fully correct the joint each step
-            cgear.maxBias = 1.2; //but limit the angular correction
-            cgear.maxForce = 50000; //emulate angular friction
-
-            control = {};
-            control.body = cbody;
-            control.pivot = cpivot;
-            control.gear = cgear;
-        }
+            shape = this._createShape(spr, body);
 
         spr._phys.active = true;
         this.actionQueue.push(['add', {
             spr: spr,
             body: body,
-            shape: shape,
-            control: control
+            shape: shape
         }, cb]);
         this.act();
+
+        return spr;
+    },
+    addControlBody: function(spr, cb) {
+        //see Chipmunk2D Tank Demo:
+        //https://github.com/slembcke/Chipmunk2D/blob/master/Demo/Tank.c#L106
+        var body = spr._phys.body;
+
+        if(!body.isStatic()) {
+            var cbody = new cp.Body(Infinity, Infinity),
+                cpivot = new cp.PivotJoint(cbody, body, cp.vzero, cp.vzero),
+                cgear;
+
+            cpivot.maxBias = 0; //disable join correction
+            cpivot.maxForce = 10000; //emulate linear friction
+
+            //infinite inertia cannot rotate, so we wouldn't need a gear joint
+            if(body.i !== Infinity) {
+                cgear = new cp.GearJoint(cbody, body, 0, 1);
+                cgear.errorBias = 0; //attempt to fully correct the joint each step
+                cgear.maxBias = 1.2; //but limit the angular correction
+                cgear.maxForce = 50000; //emulate angular friction
+            }
+
+            this.actionQueue.push(['addControl', {
+                spr: spr,
+                body: cbody,
+                pivot: cpivot,
+                gear: cgear
+            }, cb]);
+            this.act();
+        }
 
         return spr;
     },
@@ -270,7 +296,6 @@ inherit(PhysicsSystem, Object, {
         if(!spr || !spr._phys.active)
             return;
 
-        spr._phys._cb = cb;
         this.actionQueue.push(['reindex', spr._phys.shape, cb]);
         this.act();
 
@@ -309,10 +334,11 @@ inherit(PhysicsSystem, Object, {
 
         var s = this._createShape(spr, spr._phys.body, poly);
 
-        s.setSensor(sensor);
         s.width = spr.width;
         s.height = spr.height;
         s.sprite = spr;
+
+        s.setSensor(sensor);
         s.setElasticity(0);
         s.setSensor(sensor !== undefined ? sensor : spr.sensor);
         s.setCollisionType(this.getCollisionType(spr));
@@ -358,7 +384,7 @@ inherit(PhysicsSystem, Object, {
             spr._phys.control.body.setVel(vel);
         }
         //if no control body then update real body
-        else {
+        else if(spr._phys.body) {
             spr._phys.body.setVel(vel);
         }
 
@@ -379,13 +405,14 @@ inherit(PhysicsSystem, Object, {
 
         //update body position
         if(spr._phys.body) {
-            spr._phys.body.setPos(pos);
+            spr._phys.body.setPos(pos.clone());
         }
 
         //update control body position
         if(spr._phys.control) {
-            spr._phys.control.body.setPos(pos);
+            spr._phys.control.body.setPos(pos.clone());
         }
+
 
         return this;
     },
@@ -414,10 +441,10 @@ inherit(PhysicsSystem, Object, {
         return this;
     },
     /**
-     * Called each frame by the game state to update the physics simulations
+     * Called each physics step iteration. This is detached from the frame rendering and
+     * runs at a constant step.
      *
      * @method update
-     * @param dt {Number} The number of seconds passed since the last call
      * @private
      */
     update: function(dt) {
@@ -431,16 +458,32 @@ inherit(PhysicsSystem, Object, {
             return this._skip--;
 
         //execute the physics step
-        this.space.step(dt);
+        this.space.step(this.stepTime);
 
         //go through each changed shape
+        var alpha = dt / this.stepTime,
+            num = this._updateNum++,
+            spr, body;
+
+        if(alpha > 1) {
+            this.update(dt - this.stepTime);
+            alpha = 1;
+        }
+
         this.space.activeShapes.each(function(shape) {
-            //since the anchor for a cp shape is 0.5 0.5, we have to modify the pos a bit
-            //to make it match the sprite's anchor point
-            var spr = shape.sprite;
-            spr.position.x = shape.body.p.x;// + ((spr.anchor.x * shape.width) - (shape.width / 2));
-            spr.position.y = shape.body.p.y;// + ((spr.anchor.y * shape.height) - (shape.height / 2));
-            spr.rotation = shape.body.a;
+            body = shape.body;
+            spr = shape.sprite;
+
+            //already updated this body
+            if(body._updateNum === num)
+                return;
+
+            body._updateNum = num;
+
+            //update sprite
+            spr.position.lerp(body.p, alpha).round();
+            spr.rotation += (body.a - spr.rotation) * alpha;
+            spr.rotation = math.round(spr.rotation);
 
             //the sprite has changed due to a physics update, emit that event
             spr.emit('physUpdate');
@@ -542,22 +585,36 @@ inherit(PhysicsSystem, Object, {
 
             switch(act) {
                 case 'add':
-                    data.body.setPos(data.spr.position);
+                    data.body.setPos(data.spr.position.clone());
                     if(!data.body.isStatic()) {
                         this.space.addBody(data.body);
                     }
 
                     this.space.addShape(data.shape);
 
-                    if(data.control) {
-                        data.control.body.setPos(data.spr.position);
-                        this.space.addConstraint(data.control.pivot);
-                        this.space.addConstraint(data.control.gear);
-                    }
-
                     data.spr._phys.body = data.body;
                     data.spr._phys.shape = data.shape;
-                    data.spr._phys.control = data.control;
+                    data.body.sprite = data.spr;
+                    break;
+
+                case 'addControl':
+                    data.body.setPos(data.spr.position.clone());
+                    this.space.addBody(data.body);
+                    this.space.addConstraint(data.pivot);
+
+                    if(data.gear) this.space.addConstraint(data.gear);
+
+                    data.spr._phys.control = data;
+                    delete data.spr; //no need for that extra reference to lay around
+                    break;
+
+                case 'addCustomShape':
+                    if(!data.spr._phys.customShapes) {
+                        data.spr._phys.customShapes = [];
+                    }
+
+                    data.spr._phys.customShapes.push(data.shape);
+                    this.space.addShape(data.shape);
                     break;
 
                 case 'remove':
@@ -567,6 +624,20 @@ inherit(PhysicsSystem, Object, {
 
                     if(data.shape.space) {
                         this.space.removeShape(data.shape);
+                    }
+
+                    if(data.control) {
+                        if(data.control.body.space) {
+                            this.space.removeBody(data.control.body);
+                        }
+
+                        if(data.control.pivot.space) {
+                            this.space.removeConstraint(data.control.pivot);
+                        }
+
+                        if(data.control.gear && data.control.gear.space) {
+                            this.space.removeConstraint(data.control.gear);
+                        }
                     }
 
                     if(data.customShapes) {
@@ -589,16 +660,6 @@ inherit(PhysicsSystem, Object, {
                 case 'reindexStatic':
                     this.space.reindexStatic();
                     break;
-
-                case 'addCustomShape':
-                    if(!data.spr._phys.customShapes) {
-                        data.spr._phys.customShapes = [];
-                    }
-
-                    data.spr._phys.customShapes.push(data.shape);
-                    this.space.addShape(data.shape);
-                    break;
-
             }
 
             if(cb)
@@ -614,18 +675,15 @@ inherit(PhysicsSystem, Object, {
      * @private
      */
     _createBody: function(spr) {
-        var body = new cp.Body(
-            spr.mass || 1,
-            spr.inertia || cp.momentForBox(spr.mass || 1, spr.width, spr.height) || Infinity
-        );
+        var mass = spr.mass || 1,
+            inertia = spr.inertia || cp.momentForBox(mass, spr.width, spr.height) || Infinity,
+            body = new cp.Body(mass, inertia);
 
-        if(spr.mass === Infinity) {
-            //inifinite mass means it is static, so make it static
-            //and do not add it to the world (no need to simulate it)
+        if(mass === Infinity) {
             body.nodeIdleTime = Infinity;
-        }// else {
-            //this.space.addBody(body);
-        //}
+        } else {
+            body.nodeIdleTime = 0;
+        }
 
         return body;
     },
@@ -701,10 +759,12 @@ inherit(PhysicsSystem, Object, {
         shape.width = spr.width;
         shape.height = spr.height;
         shape.sprite = spr;
-        shape.setElasticity(0);
+        shape.setElasticity(spr.bounce || spr.elasticity || 0);
         shape.setSensor(spr.sensor);
         shape.setCollisionType(this.getCollisionType(spr));
         shape.setFriction(spr.friction || 0);
+
+        shape.group = spr.shapeGroup || 0;
 
         return shape;
     }

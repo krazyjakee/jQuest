@@ -1,2 +1,0 @@
-describe('SpritePool', function() {
-});

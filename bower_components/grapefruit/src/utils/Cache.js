@@ -6,7 +6,8 @@ var inherit = require('./inherit'),
     Texture = require('../display/Texture'),
     BaseTexture = require('../display/BaseTexture'),
     BitmapText = require('../text/BitmapText'),
-    PIXI = require('../vendor/pixi');
+    Tilemap = require('../tilemap/Tilemap'),
+    PIXI = require('pixi.js');
 
 /**
  * A game only has one instance of a Cache and it is used to store all externally loaded assets such
@@ -124,32 +125,46 @@ inherit(Cache, Object, {
      * @param [obj.images] {Array<Image>} Array of images used in the tilesets of this tilemap
      */
     addTilemap: function(obj) {
-        var key = obj.key,
-            fmt = obj.format,
-            tsets,
-            name;
-
-        if(fmt === C.FILE_FORMAT.XML)
-            tsets = obj.data.getElementsByTagName('tilesets');
-        else if(fmt === C.FILE_FORMAT.JSON)
-            tsets = obj.data.tilesets;
-
-        obj.textures = {};
-        for(var i = 0, il = obj.images.length; i < il; ++i) {
-            if(fmt === C.FILE_FORMAT.JSON)
-                name = tsets[i].name;
-            else if(fmt === C.FILE_FORMAT.XML)
-                name = tsets[i].attributes.getNamedItem('name').nodeValue;
-
-            var k = key + '_' + name;
-
-            PIXI.BaseTextureCache[k] = new BaseTexture(obj.images[i]);
-            PIXI.TextureCache[k] = new Texture(PIXI.BaseTextureCache[k]);
-
-            obj.textures[name] = PIXI.TextureCache[k];
+        //parse out an object representing the XML map
+        if(obj.format === C.FILE_FORMAT.XML) {
+            obj.xmlData = obj.data;
+            obj.data = Tilemap.parseXMLMap(obj.data);
         }
 
-        this._tilemaps[key] = obj;
+        //create the textures for this map
+        var tsets = obj.data.tilesets,
+            tset = null,
+            name = '',
+            k, k2;
+
+        obj.textures = {};
+
+        for(var i = 0, il = tsets.length; i < il; ++i) {
+            tset = tsets[i];
+
+            name = tset.name;
+            k = obj.key + '_' + name;
+
+            if(tset.image) {
+
+                PIXI.BaseTextureCache[k] = new BaseTexture(obj.images[tset.image]);
+                PIXI.TextureCache[k] = new Texture(PIXI.BaseTextureCache[k]);
+
+                obj.textures[name] = PIXI.TextureCache[k];
+            } else if(tset.tiles) {
+                obj.textures[name] = [];
+                for(var t in tset.tiles) {
+                    k2 = k + '_' + t;
+
+                    PIXI.BaseTextureCache[k2] = new BaseTexture(obj.images[tset.tiles[t].image]);
+                    PIXI.TextureCache[k2] = new Texture(PIXI.BaseTextureCache[k2]);
+
+                    obj.textures[name][t] = PIXI.TextureCache[k2];
+                }
+            }
+        }
+
+        this._tilemaps[obj.key] = obj;
     },
 
     /**
@@ -197,7 +212,7 @@ inherit(Cache, Object, {
         PIXI.TextureCache[key] = new Texture(PIXI.BaseTextureCache[key]);
         obj.texture = PIXI.TextureCache[key];
 
-        obj.font = BitmapText.parseXML(key, obj.data, obj.texture);
+        obj.font = BitmapText.parseXMLFont(key, obj.data, obj.texture);
 
         this._images[key] = obj;
     },

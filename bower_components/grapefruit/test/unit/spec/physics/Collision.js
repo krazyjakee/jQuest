@@ -1,2 +1,0 @@
-describe('Collision', function() {
-});

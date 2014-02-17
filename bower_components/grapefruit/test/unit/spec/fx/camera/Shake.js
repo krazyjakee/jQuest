@@ -1,2 +1,0 @@
-describe('Shake', function() {
-});

@@ -1,2 +1,0 @@
-describe('Tilelayer', function() {
-});

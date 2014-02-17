@@ -10,7 +10,7 @@ var StateManager = require('./StateManager'),
     utils = require('../utils/utils'),
     support = require('../utils/support'),
     inherit = require('../utils/inherit'),
-    PIXI = require('../vendor/pixi'),
+    PIXI = require('pixi.js'),
     C = require('../constants');
 
 /**
@@ -217,9 +217,12 @@ var Game = function(container, settings) {
      */
     this.timings = {};
 
+    this.maxDelta = 5;
+
     //pixi does some prevent default on mousedown, so we need to
     //make sure mousedown will focus the canvas or keyboard events break
     var view = this.canvas;
+
     if(!view.getAttribute('tabindex'))
         view.setAttribute('tabindex','1');
 
@@ -339,12 +342,15 @@ inherit(Game, Object, {
      * @private
      */
     _tick: function() {
-        this.timings.tickStart = this.clock.now();
-
         //start render loop
         window.requestAnimFrame(this._tick.bind(this));
 
         var dt = this.clock.getDelta();
+
+        if(dt > this.maxDelta) return;
+
+        this.timings.lastTickStart = this.timings.tickStart;
+        this.timings.tickStart = this.clock.now();
 
         this.timings.lastDelta = dt;
 

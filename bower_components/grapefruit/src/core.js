@@ -36,12 +36,17 @@ var gf = {
     //camera
     Camera:             require('./camera/Camera'),
 
+    //controls
+    Controls:           require('./controls/Controls'),
+    TopDownControls:    require('./controls/TopDownControls'),
+
     //display
     BaseTexture:        require('./display/BaseTexture'),
     Container:          require('./display/Container'),
     Graphics:           require('./display/Graphics'),
     RenderTexture:      require('./display/RenderTexture'),
     Sprite:             require('./display/Sprite'),
+    SpriteBatch:        require('./display/SpriteBatch'),
     Texture:            require('./display/Texture'),
     TilingSprite:       require('./display/TilingSprite'),
 
@@ -54,6 +59,9 @@ var gf = {
             Flash:      require('./fx/camera/Flash'),
             Scanlines:  require('./fx/camera/Scanlines'),
             Shake:      require('./fx/camera/Shake')
+        },
+        filters: {
+            Filter:     require('./fx/filters/Filter')
         }
     },
 
@@ -68,9 +76,6 @@ var gf = {
     Ellipse:            require('./geom/Ellipse'),
     Polygon:            require('./geom/Polygon'),
     Rectangle:          require('./geom/Rectangle'),
-
-    //gui
-    GuiItem:            require('./gui/GuiItem'),
 
     //input
     Input:              require('./input/Input'),
@@ -114,20 +119,33 @@ var gf = {
     inherit:            require('./utils/inherit'),
     Cache:              require('./utils/Cache'),
     Clock:              require('./utils/Clock'),
+    Color:              require('./utils/Color'),
     EventEmitter:       require('./utils/EventEmitter'),
     ObjectPool:         require('./utils/ObjectPool'),
+    Queue:              require('./utils/Queue'),
     SpritePool:         require('./utils/SpritePool'),
     ObjectFactory:      require('./utils/ObjectFactory'),
 
-    //plugin
-    plugin:             require('./plugin'),
-
     //vendor files
-    PIXI:               require('./vendor/pixi')
+    PIXI:               require('pixi.js'),
+    cp:                 require('chipmunk')
 };
 
 //replace the pixi point with a powerful vector class
 gf.PIXI.Point = gf.Vector;
+
+//expose whitelisted pixi filters
+var filters = [
+    'FilterBlock', 'WebGLFilterManager', 'FilterTexture', 'AlphaMaskFilter',
+    'ColorMatrixFilter', 'GrayFilter', 'DisplacementFilter', 'PixelateFilter',
+    'BlurXFilter', 'BlurYFilter', 'BlurFilter', 'InvertFilter', 'SepiaFilter',
+    'TwistFilter', 'ColorStepFilter', 'DotScreenFilter', 'CrossHatchFilter',
+    'RGBSplitFilter'
+];
+
+for(var f = 0; f < filters.length; ++f) {
+    gf.fx.filters[filters[f]] = gf.PIXI[filters[f]];
+}
 
 //copy over constants
 var C = require('./constants');

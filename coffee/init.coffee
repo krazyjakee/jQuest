@@ -2,7 +2,7 @@ game = false
 
 $(window).ready ->
     
-  gf.Texture.SCALE_MODE.DEFAULT = gf.Texture.SCALE_MODE.NEAREST
+  gf.PIXI.scaleModes.DEFAULT = gf.PIXI.scaleModes.NEAREST
 
   game = new gf.Game 'game',
     width: 1024

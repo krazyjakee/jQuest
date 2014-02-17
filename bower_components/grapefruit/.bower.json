@@ -1,12 +1,22 @@
 {
   "name": "grapefruit",
+  "version": "0.2.0",
+  "main": "build/gf.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tools"
+  ],
+  "dependencies": {},
+  "devDependencies": {},
   "homepage": "https://github.com/grapefruitjs/grapefruit",
-  "version": "0.1.1",
-  "_release": "0.1.1",
+  "_release": "0.2.0",
   "_resolution": {
     "type": "version",
-    "tag": "v0.1.1",
-    "commit": "ca434ed45569d355eb9c1b2a3b01a073cea9841d"
+    "tag": "v0.2.0",
+    "commit": "340abb6feb2172c2c9324ef43cfe7e01a781d1ff"
   },
   "_source": "git://github.com/grapefruitjs/grapefruit.git",
   "_target": "*",
