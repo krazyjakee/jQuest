@@ -13,7 +13,7 @@
   ],
   "dependencies": {
     "jquery": "latest",
-    "grapefruit": "latest",
+    "phaser": "latest",
     "bootstrap": "latest"
   }
 }
